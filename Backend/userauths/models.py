@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import post_save
 from shortuuid.django_fields import ShortUUIDField
+
 # Create your models here.
 
 class User(AbstractUser): #AbstractUser is a base class for creating custom user models
@@ -26,7 +28,7 @@ class User(AbstractUser): #AbstractUser is a base class for creating custom user
         super(User, self).save(*args, **kwargs)
 
 class Profile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE) # each Profile is associated with exactly one User but a User can have mutltiple profile instance.
+    user = models.OneToOneField(User, on_delete=models.CASCADE) # each Profile is associated with exactly one User but a User can have mutltiple profile instance.
     image = models.FileField(upload_to="image", default="default/default-user.jpg", null=True, blank=True)
     full_name = models.CharField(max_length=100, null=True, blank=True)
     about = models.TextField(max_length=200, null=True, blank=True)
@@ -51,8 +53,16 @@ class Profile(models.Model):
         #The parent class of Profile is models.Model. By using super(Profile, self).save(*args, **kwargs), you're calling the save method of models.Model
         super(Profile, self).save(*args, **kwargs)
 
-    
+#Ensures a Profile is created when a new User is created.
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
 
-        
+#Ensures the Profile is updated whenever the User is saved
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
+
+post_save.connect(create_user_profile, sender=User)
+post_save.connect(save_user_profile, sender=User)
 
 
