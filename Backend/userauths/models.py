@@ -53,6 +53,7 @@ class Profile(models.Model):
         #The parent class of Profile is models.Model. By using super(Profile, self).save(*args, **kwargs), you're calling the save method of models.Model
         super(Profile, self).save(*args, **kwargs)
 
+
 #Ensures a Profile is created when a new User is created.
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
