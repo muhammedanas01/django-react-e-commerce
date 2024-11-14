@@ -1,4 +1,4 @@
-//In the context of Zustand (a state management library for JavaScript), the store refers to a central place where
+//In the context of Zustand (a state management library for JavaScript), the store refers to a central place where...
 //...the state of your application is stored and managed. This store allows different parts of your application to share and update state
 import {create} from 'zustand'
 import {mountStoreDevtool} from 'simple-zustand-devtool'
@@ -7,7 +7,7 @@ import {mountStoreDevtool} from 'simple-zustand-devtool'
 //...and loading can be used to track whether a process is in progress.
 //set and get are utility functions provided by Zustand to interact with the store's state.
 const useAuthStore = create((set, get)=>({
-    allUserData: null,
+    allUserData: null,// this is key
     loading: false,
 
     //The snippet user: () => { } is an example of a property within an object where the value is an arrow function.
