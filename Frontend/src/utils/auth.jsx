@@ -82,7 +82,7 @@ export const setUser = async () => {
   }
   //checks if  access token is expired
   if (isAccessTokenExpired(accessToken)) {
-    const response = await getRefreshToken(refreshToken); // refresh token is used to obtain new access token.
+    const response = await getAccessToken(refreshToken); // refresh token is used to obtain new access token.
     setAuthUser(response.access, response.refresh);
     //if token is not expired
   } else {
@@ -91,7 +91,7 @@ export const setUser = async () => {
 };
 
 //this function Decodes tokens, stores them, and updates the Zustand store.
-//If the access token is expired new access token is stored in cookies obtained by getrefreshToken. thats why we again set cookies here.
+//If the access token is expired new access token is stored in cookies obtained by getAccessToken. thats why we again set cookies here.
 export const setAuthUser = (access_token, refresh_token) => {
   //'access_token': the key for the access token cookie.
   // access_token: The value of the access token.
@@ -120,7 +120,7 @@ export const setAuthUser = (access_token, refresh_token) => {
   useAuthStore.getState().setLoading(false);
 };
 
-export const getRefreshToken = async () => {
+export const getAccessToken = async () => {
   const refresh_token = Cookies.get("refresh_token");
   const response = await axios.post("user/token/refresh/", {
     //in this url the view for token refresh is configured
