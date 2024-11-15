@@ -12,7 +12,7 @@ const useAuthStore = create((set, get)=>({
 
     //The snippet user: () => { } is an example of a property within an object where the value is an arrow function.
     // eg  console.log(user) Outputs: { user_id: 1, username: 'john_doe' }
-    user: () =>({
+    extractUserDetails: () =>({
     user_id : get().allUserData?.user_id || null,
     username: get().allUserData?.username || null,
     }),
