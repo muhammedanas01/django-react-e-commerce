@@ -1,8 +1,8 @@
 //In the context of Zustand (a state management library for JavaScript), the store refers to a central place where...
 //...the state of your application is stored and managed. This store allows different parts of your application to share and update state
 import {create} from 'zustand'
-import {mountStoreDevtool} from 'simple-zustand-devtool'
-
+import { mountStoreDevtool } from 'simple-zustand-devtools';
+console.log("initializing STOREEEE")
 //This setup creates a simple state management structure where allUserData can be used to store user-related information,..
 //...and loading can be used to track whether a process is in progress.
 //set and get are utility functions provided by Zustand to interact with the store's state.
@@ -26,9 +26,8 @@ const useAuthStore = create((set, get)=>({
 
 }))
 
-if(import.meta.env.DEV){
-    mountStoreDevtool('Store', 'useAuthStore')
-}
+if (import.meta.env.DEV) { mountStoreDevtool('Store', useAuthStore);} 
+console.log("STORE FINISHED")
 
 export {useAuthStore}
 

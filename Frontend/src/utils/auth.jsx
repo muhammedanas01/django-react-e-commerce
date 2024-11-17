@@ -1,21 +1,21 @@
 import { useAuthStore } from "../store/auth";
 import axios from "./axios";
 import jwt_decode from "jwt-decode";
-import Cookies from "js-Cookies";
+import Cookies from "js-Cookie";
 
 export const login = async (email, password) => {
   try {
     // here we are passing the email and password to endpoint/user/token(in server in this view login is configured.)
     //response is an object that contains various pieces of information, including the data sent by the server and the status of the request.
     const response = await axios.post("user/token", { email, password });
-
+    console.log("this response:", response)
     // Destructuring the response to extract data and status
     const { data, status } = response;
 
     // 200 = request was successfull
     // data.access and data.refresh: is the access and refresh token received from the server. if we decode token it will be user credentials.//after login both token will be in browser cookies.
     //setAuthUser is a manually configerd function
-    if (status === 200) {
+    if (status === 200 && data) {
       setAuthUser(data.access, data.refresh);
     }
     return { data, error: null };
@@ -23,9 +23,10 @@ export const login = async (email, password) => {
   } catch (error) {
     return {
       data: null,
-      error: error.response.data
-        ? error.response.data.detail
-        : "something went wrong",
+      error
+      // //error: error.response.data
+      //   ? error.response.data.detail
+      //   : "something went wrong",
     };
   }
 };
@@ -56,9 +57,10 @@ export const register = async (
   } catch (error) {
     return {
       data: null,
-      error: error.response.data
-        ? error.response.data.detail
-        : "something went wrong",
+      error
+      // error: error.response.data
+      //   ? error.response.data.detail
+      //   : "something went wrong",
     };
   }
 };
@@ -113,7 +115,7 @@ export const setAuthUser = (access_token, refresh_token) => {
   // setUser is manualy configured function in {useAuthStore}'../store/auth'
   // if user it update user in zustand
   if (user) {
-    useAuthStore.getState.setUser(user);
+    useAuthStore.getState().setUser(user);
   }
 
   //setLoading is manualy configured function in {useAuthStore}'../store/auth'
