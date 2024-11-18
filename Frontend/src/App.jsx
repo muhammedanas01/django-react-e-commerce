@@ -6,16 +6,18 @@ import { Navigate, Link } from "react-router-dom";
 import Login from './views/auth/Login'
 import Homee from './views/auth/Homee';
 import Register from './views/auth/Register';
+import Logout from './views/auth/Logout';
 
 function App() {
   const [count, setCount] = useState(0)
   return (
   <BrowserRouter>
     <Routes>
-        <Route path='/' element={<Navigate to='/login'/>}/>
+        {/* <Route path='/' element={<Navigate to='/login'/>}/> */}
         <Route path='/login' element={<Login />}/>
         <Route path='/register' element={<Register />}/>
-        <Route path='/homee' element={<Homee />}/>
+        <Route path='/logout' element={<Logout />}/>
+        <Route path='/' element={<Homee />}/>
     </Routes>
   </BrowserRouter>
   )

@@ -2,6 +2,10 @@
 //...the state of your application is stored and managed. This store allows different parts of your application to share and update state
 import {create} from 'zustand'
 import { mountStoreDevtool } from 'simple-zustand-devtools';
+import jwt_decode from 'jwt-decode';
+import Cookies from "js-cookie";
+
+
 console.log("initializing STOREEEE")
 //This setup creates a simple state management structure where allUserData can be used to store user-related information,..
 //...and loading can be used to track whether a process is in progress.
@@ -24,6 +28,14 @@ const useAuthStore = create((set, get)=>({
     setLoading: (loading) => set({loading}),
     setLoggedIn: () => get().allUserData !== null,
 
+    initializeAuth: () => { 
+        const token = Cookies.get('access_token');
+        if (token) { 
+            const user = jwt_decode(token);
+             // Decode token to get user details 
+             set({ allUserData: user }); 
+            } 
+        }
 }))
 
 if (import.meta.env.DEV) { mountStoreDevtool('Store', useAuthStore);} 

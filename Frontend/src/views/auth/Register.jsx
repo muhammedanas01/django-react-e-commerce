@@ -20,10 +20,8 @@ function Register() {
 
     useEffect(() => {
         if(isLoggedIn()){
-            navigate('/homee')
-        } else {
-            //navigate('/register')
-        }
+            navigate('/')
+        } 
     }, [])
 
     const handleSubmit = async (e) => {
@@ -34,7 +32,7 @@ function Register() {
         if (error) {
             alert(JSON.stringify(error))
         } else {
-            navigate('/homee')
+            navigate('/')
         }
 
         setIsLoading(false)
@@ -96,6 +94,7 @@ function Register() {
             <br />
             <button type='submit'>Register</button>
         </form>
+        <Link to={'/login'}>Click here to Login</Link>
     </div>
   )
 }
