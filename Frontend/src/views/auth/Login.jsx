@@ -45,6 +45,7 @@ function Login() {
 
   return (
     <div>
+      <h1>Login to continue</h1>
       <form onSubmit={handleLogin}>
         <input 
             type="text"
@@ -65,7 +66,7 @@ function Login() {
 
         <button type="submit">Login</button>
       </form>
-      <h1>Login to continue</h1>
+      <h3>Dont have an account?<Link to="/register">SignUp here</Link></h3>
     </div>
   );
 }
