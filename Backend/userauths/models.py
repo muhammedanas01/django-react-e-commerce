@@ -10,7 +10,7 @@ class User(AbstractUser): #AbstractUser is a base class for creating custom user
     email = models.EmailField(max_length=254, unique=True) # user email when creating acnt.
     full_name = models.CharField(max_length=100, null=True, blank=True)
     phone_number = models.CharField(max_length=100, null=True, blank=True)
-
+    otp = models.CharField(max_length=100, null=True, blank=True)
     USERNAME_FIELD = 'email' #  email is used for authentication
     REQUIRED_FIELDS = ['username']  # it ensures Username is  also required when creating a user
 

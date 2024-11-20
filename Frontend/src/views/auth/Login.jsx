@@ -68,6 +68,8 @@ function Login() {
       <h3>
         Dont have an account?<Link to="/register">SignUp here</Link>
       </h3>
+      <br />
+      <Link to="/forget-password-reset">Forget Password?</Link>
     </div>
   );
 }

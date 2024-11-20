@@ -215,7 +215,7 @@ JAZZMIN_UI_TWEAKS = {
     "sidebar_nav_compact_style": True,
     "sidebar_nav_legacy_style": False,
     "sidebar_nav_flat_style": True,
-    "theme": "lux",
+    "theme": "darkly",
     "dark_mode_theme": "darkly",
     "button_classes": {
         "primary": "btn-outline-gold",
