@@ -25,16 +25,20 @@ const useAuthStore = create((set, get)=>({
     //set takes an object as an argument. Here, it’s { allUserData: user }
     //This object tells Zustand to update the state where allUserData will be set to whatever value user(parameter) holds.
     setUser:  (user) => set({ allUserData: user }),
-    setLoading: (loading) => set({loading}),
+    setLoading: (loading) => set({ loading }),
     setLoggedIn: () => get().allUserData !== null,
 
     initializeAuth: () => { 
+        set({ loading: true });
         const token = Cookies.get('access_token');
         if (token) { 
             const user = jwt_decode(token);
              // Decode token to get user details 
-             set({ allUserData: user }); 
-            } 
+             set({ allUserData: user, loading:false }); 
+            } else {
+                console.log('No token found'); 
+                set({ allUserData: null, loading: false });
+            }
         }
 }))
 

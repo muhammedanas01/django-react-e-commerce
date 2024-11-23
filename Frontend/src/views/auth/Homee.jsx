@@ -21,10 +21,12 @@ function Homee() {
         : //elseeeeeeee
         <div>
           <h1>Home page</h1>
-          <Link to={'/login'}>Click here to Login</Link>
+          <div className='d-flex'>
+          <Link className='btn btn-primary' to={'/login'}>Click here to Login</Link>
           <br />
           <br />
-          <Link to={'/register'}>Click here to SignUp</Link>
+          <Link className='btn btn-success ms-4' to={'/register'}>Click here to SignUp</Link>
+          </div>
         </div>
       }
       

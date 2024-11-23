@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* Navbar styles */
+.navbar {
+  background-color: #2b2d42; /* Dark, luxurious background color */
+  font-family: 'Playfair Display', serif; /* Classic, elegant font */
+  padding: 15px 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.navbar-brand {
+  font-family: 'Poppins', sans-serif; /* Modern, clean font */
+  font-size: 1.75rem;
+  color: #f8f9fa; /* White color for contrast */
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.navbar-brand:hover {
+  color: #ffb703; /* Gold hover color for a luxurious feel */
+}
+
+.nav-link,
+.navbar-nav .nav-item .nav-link {
+  color: #f8f9fa; /* White color for contrast */
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  padding: 8px 16px; /* More padding for better spacing */
+}
+
+.nav-link:hover,
+.navbar-nav .nav-item .nav-link:hover {
+  color: #a3b8f1; /*  */
+  background-color: rgba(255, 183, 3, 0.1); /* Subtle background for hover effect */
+  border-radius: 5px; /* Rounded corners for hover effect */
+}
+
+.dropdown-menu {
+  background-color: #c8cbec; /* Darker dropdown background for contrast */
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow for dropdown */
+}
+#343a40
+.dropdown-item {
+  color: #f8f9fa; /* White color for contrast */
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+}
+
+.dropdown-item:hover {
+  color: #386be1; /* Gold hover color for a luxurious feel */
+  background-color: rgba(255, 183, 3, 0.1); /* Subtle background for hover effect */
+}
+
+
+.btn-outline-success {
+  border-radius: 10px;
+  color: #d6cde7; /* Green color for a fresh look */
+  border-color: #007BFF;
+}
+
+.btn-outline-success:hover {
+  background-color: #364be7;
+  color: #fff;
+}
+
+.btn-primary {
+  border-radius: 10px;
+  background: linear-gradient(45deg, #3a86ff, #8338ec);
+  border: none;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(45deg, #8338ec, #3a86ff);
+}
+
+.btn-register {
+  border-radius: 10px;
+  background:  #09dd53; /* New gradient color */
+  border: none;
+  color: black;
+}
+
+.btn-register:hover {
+  background: #09dd53;  /* New gradient color */
+}
+
+.btn-danger {
+  border-radius: 10px;
+  background: linear-gradient(45deg, #ef233c, #d90429);
+  border: none;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(45deg, #d90429, #ef233c);
+}
