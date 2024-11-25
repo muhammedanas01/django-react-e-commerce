@@ -37,6 +37,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     # After this validation, DRF collects the validated data into a dictionary called attrs.
     # this attrs can be used if need in further methods. it exist only  during the execution of the validate method or any further method.
 
+    #custome validation
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password":"password does not match"})
@@ -51,7 +52,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             phone_number = validated_data['phone_number'],
         )
 
-        email_username, mobile = user.email.split("@")
+        email_username, mobile = user.email.split("@")# name getting after spliting
         user.username = email_username
         user.set_password(validated_data['password'])
         user.save()

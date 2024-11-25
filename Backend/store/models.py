@@ -21,6 +21,8 @@ class Category(models.Model):
     active = models.BooleanField(default=True)
     slug = models.SlugField(unique=True)
 
+    # Defines the plural name for the model. It is used in the Django admin interface.
+    # We can set it to any meaningful name we want, and it will be used as the plural representation of the table.
     class Meta:
         verbose_name_plural = "Category"
         ordering = ['-title']   
@@ -52,10 +54,13 @@ class Product(models.Model):
 
     date = models.DateTimeField(auto_now_add=True)
 
+    # Defines the plural name for the model. It is used in the Django admin interface.
+    # We can set it to any meaningful name we want, and it will be used as the plural representation of the table.
     class Meta:
         verbose_name_plural = "Products"
         ordering = ['-title']   
 
+    #string representation of this model
     def __str__(self):
         return str(self.title)
 
@@ -67,8 +72,72 @@ class Product(models.Model):
         super(Product, self).save( *args, **kwargs)# ensures that the model instance is saved
 
 
+class Gallery(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    image = models.FileField(upload_to="products", default="product.jpg", )
+    active = models.BooleanField(default=True)
+    date = models.DateTimeField(auto_now_add=True)
+    gallery_id = ShortUUIDField(unique=True, length=10, alphabet="1234567890abcdefghijklmnopqrstuvwxyz")
+
+    def __str__(self):
+        return str(self.product.title)
+    
+    # Defines the plural name for the model. It is used in the Django admin interface.
+    # We can set it to any meaningful name we want, and it will be used as the plural representation of the table.
+    class Meta:
+        verbose_name_plural = "Product Images"
+        
+
+
+class Specification(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    title = models.CharField(max_length=1000)
+    content = models.CharField(max_length=1000)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.title)
+    
+    # Defines the plural name for the model. It is used in the Django admin interface.
+    # We can set it to any meaningful name we want, and it will be used as the plural representation of the table.
+    class Meta:
+        verbose_name_plural = "Specification"
+        
+
+# same products with diffrent size may be having diffrent price so this is to give appropriate size for appropriate product.
+class Size(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    name = models.CharField(max_length=1000)
+    price = models.DecimalField(decimal_places=2, max_digits=12, default=0.00) # for price
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.name)
+    
+    # Defines the plural name for the model. It is used in the Django admin interface.
+    # We can set it to any meaningful name we want, and it will be used as the plural representation of the table.
+    class Meta:
+        verbose_name_plural = "Size"
+        
+
+class Color(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    name = models.CharField(max_length=1000)
+    color_code = models.CharField(max_length=100)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.name) 
+    
+    # Defines the plural name for the model. It is used in the Django admin interface.
+    # We can set it to any meaningful name we want, and it will be used as the plural representation of the table.
+    class Meta:
+        verbose_name_plural = "Color"
+        
 
 
 
+
+    
 
 
