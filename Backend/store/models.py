@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
-
+from django.dispatch import receiver
+from django.db.models.signals import post_save 
 from vendor.models import Vendor
 from userauths.models import User, Profile
 
@@ -30,6 +31,15 @@ ORDER_STATUS = (
     ("Cancelled","Cancelled"),
     ("Successfull", "Successfull")
 
+)
+
+#review choices
+RATING = (
+    (1,"1 Star"),
+    (2,"2 Star"),
+    (3,"3 Star"),
+    (4,"4 Star"),
+    (5,"5 Star"),
 )
 
 class Category(models.Model):
@@ -80,11 +90,20 @@ class Product(models.Model):
     #string representation of this model
     def __str__(self):
         return str(self.title)
+    
+    #This filters the Review model to get all reviews related to the current product instance(self)
+    #aggregates the filtered reviews to calculate the average rating, returns a dictionary
+    def product_rating(self):
+        product_rating = Review.objects.filter(product=self).aggregate(avg_rating=models.Avg("rating"))
+        return product_rating['avg_rating'] or 0 # returns 0 when there are no reviews
+    
 
     #over rides default save method
     def save(self, *args, **kwargs):
         if self.slug == "" or self.slug == None:
-            self.slug == slugify(self.title)
+            self.slug = slugify(self.title)
+
+        self.rating = self.product_rating()
 
         super(Product, self).save( *args, **kwargs)# ensures that the model instance is saved
 
@@ -176,7 +195,7 @@ class Cart(models.Model):
 
 # Represents an order made by a user, which can contain multiple products and is linked to multiple vendors.
 # When the user decides to checkout and places an order, the items from the cart are converted into an order.
-# Stores overall details of an entire order
+# Store's overall details of an entire order
 class CartOrder(models.Model):
     vendor = models.ManyToManyField(Vendor, blank=True) # indicating which vendors are involved in the order.
     buyer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)# one buyer can have multiple cart order instances
@@ -212,11 +231,11 @@ class CartOrder(models.Model):
     def __str__(self):
         return self.order_id
 
-# represents each individual item that is part of the overall CartOrder
+# represents each individual item that is part of the overall entire CartOrder
 # Represents each product within the CartOrder, detailing the specifics of each item (such as quantity, price, vendor, etc.)
 class CartOrderItem(models.Model):
     order = models.ForeignKey(CartOrder, on_delete=models.CASCADE)
-    Product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
 
 
@@ -241,3 +260,82 @@ class CartOrderItem(models.Model):
         return self.order_id
 
 
+# This model allows users to ask questions about specific products and have those questions answered.
+class ProductFaq(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    email = models.EmailField(null=True, blank=True)
+    question = models.CharField(max_length=1000)
+    answer = models.TextField(null=True, blank=True)
+    active = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.question
+    
+    # Defines the plural name for the model. It is used in the Django admin interface.
+    # We can set it to any meaningful name we want, and it will be used as the plural representation of the table.
+    class Meta:
+        verbose_name_plural = "Product FaQs"
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    review = models.TextField(null=True, blank=True)
+    rating = models.IntegerField(default=None, choices=RATING)
+    active = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.product.title
+    
+    # Defines the plural name for the model. It is used in the Django admin interface.
+    # We can set it to any meaningful name we want, and it will be used as the plural representation of the table.
+    class Meta:
+        verbose_name_plural = "Product Review"
+    
+    #to access the profile of the user who wrote the review
+    def profile(self):
+        return Profile.objects.get(user=self.user)
+    
+#when review is saved it will trigger the update_product_rating
+@receiver(post_save, sender = Review)
+def update_product_rating(sender, instance, **kwargs):
+    if instance.product:
+        instance.product.save()
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.Product.title
+    
+    class Meta:
+        verbose_name_plural = "Wishlist"
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order = models.ForeignKey(CartOrder, models.SET_NULL, null=True, blank=True)
+    vendor = models.ForeignKey(Vendor, models.CASCADE)
+    order_item = models.ForeignKey(CartOrderItem, on_delete= models.SET_NULL, null=True, blank=True)
+    seen = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        if self.order:
+            return self.order.order_id
+        else:
+            return f"Notification - {self.pk}"
+        
+class Coupon(models.Model):
+    user_by = models.ManyToManyField(User, blank=True) # to associate multiple users with a single coupon and and each user can use multiple coupons.
+    vendor = models.ForeignKey(Vendor, models.CASCADE)
+    code = models.CharField(max_length=1000)
+    discount = models.IntegerField(default=1)   
+    seen = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.code
