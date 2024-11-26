@@ -6,12 +6,29 @@ from userauths.models import User, Profile
 
 from shortuuid.django_fields import ShortUUIDField
 
-
+#choices
 STATUS = (
     ("draft","Draft"),
     ("disabled","Disabled"),
     ("in_review","In Review"),
     ("published","Published"),
+
+)
+#choices
+PAYMENT_STATUS = (
+    ("Paid","Paid"),
+    ("Pending","Pending"),
+    ("Processing","Processing"),
+    ("Cancelled","Cancelled"),
+
+)
+
+#choices
+ORDER_STATUS = (
+    ("Pending","Pending"),
+    ("Processing","Processing"),
+    ("Cancelled","Cancelled"),
+    ("Successfull", "Successfull")
 
 )
 
@@ -133,11 +150,94 @@ class Color(models.Model):
     # We can set it to any meaningful name we want, and it will be used as the plural representation of the table.
     class Meta:
         verbose_name_plural = "Color"
-        
 
 
+# Represents individual items added to a shopping cart by a user.
+# Represents items that a user is currently considering for purchase but has not yet ordered
+class Cart(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    item_quantity = models.PositiveIntegerField(default=0)
+    price = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    sub_total =  models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    shipping_amount =  models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    service_fee =  models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    tax =  models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    total =  models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    country = models.CharField(max_length=100, null=True, blank=True)
+    size = models.CharField(max_length=100, null=True, blank=True)
+    color = models.CharField(max_length=100, null=True, blank=True)
+    cart_id = models.CharField(max_length=100, null=True, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.cart_id} - {self.product.title}"
 
 
-    
+# Represents an order made by a user, which can contain multiple products and is linked to multiple vendors.
+# When the user decides to checkout and places an order, the items from the cart are converted into an order.
+# Stores overall details of an entire order
+class CartOrder(models.Model):
+    vendor = models.ManyToManyField(Vendor, blank=True) # indicating which vendors are involved in the order.
+    buyer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)# one buyer can have multiple cart order instances
+    sub_total =  models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    shipping_amount =  models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    service_fee =  models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    tax =  models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    total =  models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+
+    payment_status = models.CharField(choices=PAYMENT_STATUS, max_length=100, default="Pending")
+    order_status = models.CharField(choices=ORDER_STATUS, max_length=100, default="Pending")
+
+    #coupen
+    initial_total = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)# initial total amount is total bill amount to reduce coupen discount from it    
+    saved  = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+
+    #personal info 
+    full_name = models.CharField(max_length=100, null=True, blank=True)
+    email = models.CharField(max_length=100, null=True, blank=True)
+    mobile = models.CharField(max_length=100, null=True, blank=True)
+    additional_mobile = models.CharField(max_length=100, null=True, blank=True)
+
+    #shipping adress
+    address = models.CharField(max_length=100, null=True, blank=True)
+    landmark = models.CharField(max_length=100, null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
+    state = models.CharField(max_length=100, null=True, blank=True)
+    country = models.CharField(max_length=100, null=True, blank=True)
+
+    order_id = ShortUUIDField(unique=True, length=10, alphabet="1234567890hjdsuwyeodnb")
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.order_id
+
+# represents each individual item that is part of the overall CartOrder
+# Represents each product within the CartOrder, detailing the specifics of each item (such as quantity, price, vendor, etc.)
+class CartOrderItem(models.Model):
+    order = models.ForeignKey(CartOrder, on_delete=models.CASCADE)
+    Product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
+
+
+    item_quantity = models.PositiveIntegerField(default=0)
+    price = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    sub_total =  models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    shipping_amount =  models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    service_fee =  models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    tax =  models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    total =  models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    country = models.CharField(max_length=100, null=True, blank=True)
+    size = models.CharField(max_length=100, null=True, blank=True)
+    color = models.CharField(max_length=100, null=True, blank=True)
+
+    initial_total = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)# initial total amount is total bill amount to reduce coupen discount from it    
+    saved  = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+
+    item_id = ShortUUIDField(unique=True, length=10, alphabet="1234567890hjdsuwyeodnb")
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.order_id
 
 
