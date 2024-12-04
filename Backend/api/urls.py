@@ -25,6 +25,8 @@ urlpatterns = [
     path('category/', store_views.CategoryListApiView.as_view(), name='category'),
     #for product list
     path('products/', store_views.ProductListApiView.as_view(), name='product'),
+    #for product details
+    path('product-detail/<slug>/', store_views.ProductDetailApiView.as_view(), name='product-detail'),
 
 ]
 

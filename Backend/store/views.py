@@ -21,3 +21,11 @@ class ProductListApiView(generics.ListAPIView):
     #specify serializer this view must interact with to transform the queryset objects into Json
     serializer_class = ProductSerializers
     permission_classes = [AllowAny, ] #without autheraisation user can access this view
+
+class ProductDetailApiView(generics.RetrieveAPIView):
+   serializer_class = ProductSerializers
+   permission_classes = [AllowAny]
+   #This method overrides the default method to fetch a specific object based on the slug parameter from the URL.
+   def get_object(self):
+       slug = self.kwargs['slug'] # slug from url
+       return Product.objects.get(slug = slug)
