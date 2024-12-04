@@ -1,0 +1,13 @@
+.btn-black {
+    background-color: black;
+    color: white; /* Ensures the text is visible */
+    border-color: black; /* Matches the button border with the background color */
+  }
+  
+  .btn-black:hover {
+    background-color: rgb(185, 181, 181); 
+    color: black; /* Invert the text color to black */
+    border-color: black; /* Keep the border color black */
+  }
+  
+  

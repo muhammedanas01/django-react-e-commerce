@@ -51,7 +51,7 @@ function Register() {
       password2
     );
     if (error) {
-      alert(JSON.stringify(error));
+      alert(JSON.stringify(error)); 
       
     } else {
       navigate("/");
@@ -167,14 +167,7 @@ function Register() {
                                                     {password2 !== password ? 'Passwords do not match' : ''}
                                                 </p> */}
 
-                          {/* <button
-                            className="btn btn-primary w-100"
-                            type="submit"
-                            disabled={isLoading}
-                          >
-                            <span className="mr-2">Sign Up</span>
-                            <i className="fas fa-user-plus" />
-                          </button> */}
+                          
 
                           {isLoading === true ? 
                               <button
