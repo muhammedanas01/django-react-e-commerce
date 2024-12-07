@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from store.models import Product, Category, Gallery, Specification, Size, Color, Cart, CartOrder, CartOrderItem, Wishlist, ProductFaq, Review, Notification, Coupon
+from store.models import Product, Category, Gallery, Specification, Size, Color, Cart, CartOrder, CartOrderItem, Wishlist, ProductFaq, Review, Notification, Coupon, Tax
 
 #Instead of navigating to a separate admin page for Gallery, you’ll have an inline section within the Product admin page where you can manage the Gallery images
 class GalleryInline(admin.TabularInline):
@@ -20,7 +20,7 @@ class Color_Inline(admin.TabularInline):
     extra = 1 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['category','title', 'price', 'shipping_amount', 'stock_quantity', 'in_stock', 'vendor', 'featured']
+    list_display = ['title','category','price', 'shipping_amount', 'stock_quantity', 'in_stock', 'vendor', 'featured']
     list_editable = ['featured']
     list_filter = ['date']
     search_fields = ['title']
@@ -90,7 +90,8 @@ class NotificationAdmin(admin.ModelAdmin):
 
 admin.site.register(Notification, NotificationAdmin)
 
-
+##
+admin.site.register(Tax)
 
 
 

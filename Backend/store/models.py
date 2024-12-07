@@ -72,7 +72,7 @@ class Product(models.Model):
     status = models.CharField(max_length=100, choices=STATUS, default="published")
     featured = models.BooleanField(default=False)
     views = models.PositiveIntegerField(default=0)
-    rating  = models.PositiveIntegerField(default=0)
+    rating  = models.PositiveIntegerField(default=0, null=True, blank=True)
 
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE) #many to-one relationship. one vendor can have many products 
 
@@ -351,3 +351,16 @@ class Coupon(models.Model):
 
     def __str__(self):
         return self.code
+    
+class Tax(models.Model):
+    country = models.CharField(max_length=100)
+    rate = models.IntegerField(default=5, help_text="numbers here added are consider as percentage. eg:5%")
+    active = models.BooleanField(default=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.country
+    
+    class Meta:
+        verbose_name_plural = "Tax"
+        ordering = ['country'] # displays in alphabetical order

@@ -81,10 +81,9 @@ class ProductSerializers(serializers.ModelSerializer):
             self.Meta.depth = 0 # Only the primary fields of the Product model will be serialized
         else:
             self.Meta.depth = 3 # serializer will include related objects up to 3 levels deep.
-        
+
 
 class CartSerializers(serializers.ModelSerializer):
-   
     class Meta:
         model = Cart
         fields = "__all__"
