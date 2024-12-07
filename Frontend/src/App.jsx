@@ -19,6 +19,7 @@ import Password from "./views/auth/Password"; // requesting for reseting pass
 import CreatePassword from "./views/auth/CreatePassword"; // request accepted and change password
 
 import Products from "./views/store/Products";
+import ProductDetails from "./views/store/ProductDetails";
 
 function App() {
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
@@ -29,22 +30,18 @@ function App() {
   return (
     <BrowserRouter>
       <StoreHeader />
-
       <Routes>
-        
         <Route path="/home" element={<Homee />} />
-
-        {/* auth components */}
+        {/* for authentication */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/forget-password-reset" element={<Password />} />
         <Route path="/create-new-password" element={<CreatePassword />} />
-
-        {/* Store components */}
+        {/* for store */}
         <Route path="/" element={<Products />} />
+        <Route path="/product-detail/:slug/" element={<ProductDetails />} />
       </Routes>
-
       <StoreFooter />
     </BrowserRouter>
   );

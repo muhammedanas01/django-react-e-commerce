@@ -2,7 +2,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
 /* Navbar styles */
+.sticky-navbar {
+  position: fixed;
+  top: 0;
+  z-index: 1020; /* Ensure it stays above other elements */
+  background-color: #2b2d42;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
 .navbar {
+  display: flex;
+  top: 0;
+  z-index: 1020;
   background-color: #2b2d42; /* Dark, luxurious background color */
   font-family: 'Playfair Display', serif; /* Classic, elegant font */
   padding: 15px 10px;
@@ -37,11 +49,11 @@
 }
 
 .dropdown-menu {
-  background-color: #c8cbec; /* Darker dropdown background for contrast */
+  background-color: #4d4f60; /* Darker dropdown background for contrast */
   border-radius: 10px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow for dropdown */
 }
-#343a40
+
 .dropdown-item {
   color: #f8f9fa; /* White color for contrast */
   font-family: 'Poppins', sans-serif;
@@ -49,10 +61,9 @@
 }
 
 .dropdown-item:hover {
-  color: #386be1; /* Gold hover color for a luxurious feel */
+  color: #789ae9; /* Gold hover color for a luxurious feel */
   background-color: rgba(255, 183, 3, 0.1); /* Subtle background for hover effect */
 }
-
 
 .btn-outline-success {
   border-radius: 10px;
@@ -78,7 +89,7 @@
 
 .btn-register {
   border-radius: 10px;
-  background:  #09dd53; /* New gradient color */
+  background: #09dd53; /* New gradient color */
   border: none;
   color: black;
 }
@@ -97,3 +108,4 @@
 .btn-danger:hover {
   background: linear-gradient(45deg, #d90429, #ef233c);
 }
+

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import apiInstance from "../../utils/axios";
+import { Link } from "react-router-dom";
 
 import "../Style/product-card-btn.css";
 // category/
@@ -11,13 +12,15 @@ function Products() {
     apiInstance.get(`products/`).then((response) => {
       setProducts(response.data);
     });
+  }, []);
 
-    apiInstance.get('category/').then((response) => {
-      setCategory(response.data)
+  useEffect(() => {
+    apiInstance.get("category/").then((response) => {
+      setCategory(response.data);
     });
   }, []);
 
-  console.log(category);
+  
   return (
     <>
       <main className="mt-5">
@@ -31,15 +34,17 @@ function Products() {
                       className="bg-image hover-zoom ripple"
                       data-mdb-ripple-color="light"
                     >
-                      <img
-                        src={p.image}
-                        className="w-100"
-                        style={{
-                          width: "100%",
-                          height: "250px",
-                          objectFit: "cover",
-                        }}
-                      />
+                      <Link to={`/product-detail/${p.slug}/`}>
+                        <img
+                          src={p.image}
+                          className="w-100"
+                          style={{
+                            width: "100%",
+                            height: "250px",
+                            objectFit: "cover", 
+                          }}
+                        />
+                      </Link>
                       <a href="#!">
                         <div className="mask">
                           <div className="d-flex justify-content-start align-items-end h-100">
@@ -161,7 +166,6 @@ function Products() {
                             <button
                               type="button"
                               className="btn btn-black me-1 mb-1"
-                              
                             >
                               <i className="fas fa-shopping-cart" />
                             </button>
@@ -189,25 +193,35 @@ function Products() {
                 <h4>Categories</h4>
                 <br />
                 <br />
-                {category?.map((c, index) => ( 
-                <button
-                className="col-lg-2 btn p-0 d-flex flex-column align-items-center"
-                style={{ border: "none", backgroundColor: "transparent" }}
-              >
-                <img
-                  src={c.image}
-                  alt={c.title}
-                  style={{ width: "100px", height: "100px", borderRadius: "50%", objectFit: "cover" }}
-                />
-                <span
-                  className="btn btn-secondary mt-2"
-                  style={{ width: "100px", backgroundColor: "white", color: "black", display: "block", textAlign: "center", border:"none", textDecoration: "underline" }}
-                >
-                  {c.title}
-                </span>
-              </button>
-              
-              
+                {category?.map((c, index) => (
+                  <button
+                    className="col-lg-2 btn p-0 d-flex flex-column align-items-center"
+                    style={{ border: "none", backgroundColor: "transparent" }}
+                  >
+                    <img
+                      src={c.image}
+                      alt={c.title}
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <span
+                      className="btn btn-secondary mt-2"
+                      style={{
+                        width: "100px",
+                        backgroundColor: "white",
+                        color: "black",
+                        display: "block",
+                        textAlign: "center",
+                        border: "none",
+                      }}
+                    >
+                      <h6>{c.title}</h6>
+                    </span>
+                  </button>
                 ))}
               </div>
             </div>
