@@ -6,7 +6,9 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from userauths.models import Profile, User
 
 #N0TE: MyTokenObtainPairSerializer is specifically for validating login credentials and generating JWT tokens.
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+#N0TE: password validation or authentication is handled by TokenObtainPairSerializer, it is a part of its default behavior when using rest_framework_simplejwt
+# then why customizing default get_token method? to access important user details from the token without needing extra API requests
+class   MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user): #cls refers to the class that is calling the method.in our case TokenObtainPairSerializer. and for user it is  generating token the token so pass it as a parameter.
         token = super().get_token(user)# get token is method calling from parent class for generating token for user.  
