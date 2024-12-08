@@ -6,17 +6,21 @@ import apiInstance from "../../utils/axios";
 import "../Style/product-detail.css";
 
 function ProductDetails() {
+  // auto detects slug in url
+  const param = useParams(); 
+  // here using slug we will identify which product it is.
   const [product, setProduct] = useState([]);
 
+  // this is to get color, gallery, size and  spec of product.
   const [specifications, setSpecifications] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [colors, setColors] = useState([]);
   const [size, setSize] = useState([]);
 
-  const param = useParams(); // auto detects slug in url
-
   useEffect(() => {
+    // this prodect-detail/<slug> endpoint is to connect backend and from backend using slug we will get the particular product.
     apiInstance.get(`product-detail/${param.slug}/`).then((response) => {
+      // this is all availabe color,size, and photos of product in backend for displaying to user
       setProduct(response.data);
       setSpecifications(response.data.specification);
       setColors(response.data.color);
@@ -24,10 +28,41 @@ function ProductDetails() {
       setGallery(response.data.gallery);
     });
   }, []);
-  //143
-  const handleForm = async (e) => {
-    e.preventDefault();
+
+  // this is for when adding to cart
+  const [userSelectedColor, setuserSelectedColor] = useState(" no color selected");
+  const [userSelectedSize, setUserSelectedSize] = useState(" no size selected");
+  const [userChosenQuantity, setUserChosenQuantity] = useState(1);
+
+  const handleColorButtonClick = (event) => {
+    // when we clicked color .color_button grab the colosest element which has  a class name of color_name
+    const colorNameInput = event.target
+      .closest(".color_button")
+      .parentNode.querySelector(".color_name");
+    setuserSelectedColor(colorNameInput.value);
   };
+
+  const handleSizeButtonClick = (event) => {
+    // when we click size .size_button grab the colosest element which has a class name of size_name
+    const sizeNameInput = event.target
+      .closest(".size_button")
+      .parentNode.querySelector(".size_name");
+    setUserSelectedSize(sizeNameInput.value);
+  };
+
+  const handleUserChosenQuantity = (event) => {
+    setUserChosenQuantity(event.target.value)
+  };
+  
+  const handleAddToCart = () => {
+    console.log(userSelectedColor)
+    console.log(userSelectedSize)
+    console.log(userChosenQuantity)
+    console.log(product.id)      
+  }
+
+  //143
+  
   return (
     <main className="mb-4 mt-4">
       <div className="container">
@@ -140,31 +175,33 @@ function ProductDetails() {
                   </table>
                 </div>
                 <hr className="my-5" />
-                <form onSubmit={handleForm}>
+                <div>
                   <div className="row flex-column">
                     {/* Quantity */}
-                    <div className="col-md-6 mb-4">
+                    <div className="{`col-md-6 mb-4 ${!size?.length && !colors?.length ? 'reduced-gap' : ''}`} ">
                       <div className="form-outline">
                         <label className="form-label" htmlFor="typeNumber">
                           <b>Quantity</b>
                         </label>
                         <input
+                          style={{ width: '190px' }}
                           type="number"
                           id="typeNumber"
                           className="form-control quantity"
+                          value={userChosenQuantity}
                           min={1}
-                          value={1}
+                          onChange={handleUserChosenQuantity}
                         />
                       </div>
                     </div>
 
-                    {/* Size */}
-                    <div className="col-md-6 mb-4">
-                      {size && size.length > 0 ? ( // Check if the size array exists and is not empty
-                        <>
+                    {/* Size  this coloums renders only if there is*/}
+                    {size &&
+                      size.length > 0 && ( // Check if the size array exists and is not empty
+                        <div className="col-md-6 mb-4">
                           <div className="form-outline">
                             <label className="form-label" htmlFor="typeNumber">
-                              <b>Size:</b> XS
+                              <b>Size:</b> <strong>{userSelectedSize}</strong>
                             </label>
                           </div>
                           <div className="d-flex">
@@ -175,27 +212,26 @@ function ProductDetails() {
                                   className="size_name"
                                   value={s.name} // Use the actual size name dynamically
                                 />
-                                <button className="btn btn-black size_button">
+                                <button
+                                  className="btn btn-black size_button"
+                                  type="button"
+                                  onClick={handleSizeButtonClick}
+                                >
                                   {s.name}
                                 </button>
                               </div>
                             ))}
                           </div>
-                        </>
-                      ) : (
-                        //else
-                        <h6>No sizes available</h6> // Render this if the size array is empty or undefined
+                        </div>
                       )}
-                    </div>
 
-                    {/* Colors */}
-
-                    <div className="col-md-6 mb-4">
-                      {colors && colors.length > 0 ? ( // Check if the colors array exists and is not empty
-                        <>
+                    {/* Colors   this coloums renders only if there is color        */}
+                    {colors &&
+                      colors.length > 0 && ( // Check if the colors array exists and is not empty
+                        <div className="col-md-6 mb-4">
                           <div className="form-outline">
                             <label className="form-label" htmlFor="typeNumber">
-                              <b>Color:</b>
+                              <b>Color:{userSelectedColor}</b>
                             </label>
                           </div>
                           <div className="d-flex">
@@ -203,31 +239,31 @@ function ProductDetails() {
                               <div key={index}>
                                 {" "}
                                 {/* Use index for unique key */}
+                                {/* here for each color there is a input field and value of it will be color code thats how we know which color user has clicked */}
                                 <input
                                   type="hidden"
                                   className="color_name"
-                                  value={c.color_code} // Use the actual color code dynamically
+                                  value={c.name}
                                 />
                                 <button
                                   className="btn p-3 me-2 color_button"
+                                  type="button"
+                                  onClick={handleColorButtonClick}
                                   style={{
-                                    background: c.color_code,
+                                    background: c.name,
                                     borderRadius: "50%",
                                   }}
                                 ></button>
                               </div>
                             ))}
                           </div>
-                          <hr />
-                        </>
-                      ) : ( //else
-                        <h6>No colors available</h6> // Render this if the colors array is empty or undefined
+                        </div>
                       )}
-                    </div>
                   </div>
                   <button
                     type="button"
                     className="btn cart-btn btn-rounded me-2"
+                    onClick={handleAddToCart}
                   >
                     <i className="fas fa-cart-plus me-2" /> Add to cart
                   </button>
@@ -240,7 +276,7 @@ function ProductDetails() {
                   >
                     <i className="fas fa-heart" />
                   </button>
-                </form>
+                </div>
               </div>
             </div>
           </div>

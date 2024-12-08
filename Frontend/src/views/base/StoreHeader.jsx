@@ -1,14 +1,14 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import '../Style/StoreHeader.css'; // Ensure the path is correct
+import React from "react";
+import { Link } from "react-router-dom";
+import "../Style/StoreHeader.css"; // Ensure the path is correct
 
 function StoreHeader() {
   return (
-    <div>
-      <nav className="navbar navbar-expand-lg navbar-dark">
+      <div>
+      <nav className="navbar navbar-expand-lg navbar-dark sticky-navbar">
         <div className="container">
           <Link className="navbar-brand" to="/">
-            SkyWalker.
+            Skywalker.
           </Link>
           <button
             className="navbar-toggler"
@@ -51,7 +51,10 @@ function StoreHeader() {
                     </Link>
                   </li>
                   <li>
-                    <Link className="dropdown-item" to="/customer/notifications/">
+                    <Link
+                      className="dropdown-item"
+                      to="/customer/notifications/"
+                    >
                       <i className="fas fa-bell fa-shake"></i> Notifications
                     </Link>
                   </li>
@@ -151,7 +154,10 @@ function StoreHeader() {
           </div>
         </div>
       </nav>
-    </div>
+      <div style={{ height: "70px" }}>
+        <p>Scroll down to test sticky navbar</p>
+      </div>
+      </div>
   );
 }
 

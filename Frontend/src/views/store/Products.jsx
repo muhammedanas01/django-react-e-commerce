@@ -34,6 +34,7 @@ function Products() {
                       className="bg-image hover-zoom ripple"
                       data-mdb-ripple-color="light"
                     >
+                      {/* this product-detail is to navigate another component  */}
                       <Link to={`/product-detail/${p.slug}/`}>
                         <img
                           src={p.image}

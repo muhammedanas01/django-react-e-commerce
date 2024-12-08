@@ -171,7 +171,7 @@ class Size(models.Model):
 class Color(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     name = models.CharField(max_length=1000)
-    color_code = models.CharField(max_length=100)
+    color_code = models.CharField(max_length=100, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
