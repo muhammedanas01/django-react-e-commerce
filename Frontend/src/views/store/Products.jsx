@@ -75,9 +75,9 @@ function Products() {
                       </a>
                       <div className="d-flex justify-content-center">
                         <h6 className="mb-3 text-muted ms-2">
-                          <strike>₹{p.old_price}</strike>
+                          <strike>AED {p.old_price}</strike>
                         </h6>
-                        <h6 className="mb-3 ms-2">₹{p.price}</h6>
+                        <h6 className="mb-3 ms-2">AED {p.price}</h6>
                       </div>
 
                       <div className="btn-group">

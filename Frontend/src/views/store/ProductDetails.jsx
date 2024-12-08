@@ -2,14 +2,18 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import apiInstance from "../../utils/axios";
+import GetCurrentAddress from "../plugin/UserCountry";
 
 import "../Style/product-detail.css";
 
 function ProductDetails() {
   // auto detects slug in url
-  const param = useParams(); 
+  const param = useParams();
   // here using slug we will identify which product it is.
   const [product, setProduct] = useState([]);
+
+  const currentAddress = GetCurrentAddress();
+  
 
   // this is to get color, gallery, size and  spec of product.
   const [specifications, setSpecifications] = useState([]);
@@ -27,10 +31,17 @@ function ProductDetails() {
       setSize(response.data.size);
       setGallery(response.data.gallery);
     });
-  }, []);
+  }, [param.slug]);
+
+  useEffect(() => {
+    if (currentAddress) {
+      console.log(currentAddress);
+    }
+  }, [currentAddress]);
 
   // this is for when adding to cart
-  const [userSelectedColor, setuserSelectedColor] = useState(" no color selected");
+  const [userSelectedColor, setuserSelectedColor] =
+    useState(" no color selected");
   const [userSelectedSize, setUserSelectedSize] = useState(" no size selected");
   const [userChosenQuantity, setUserChosenQuantity] = useState(1);
 
@@ -51,18 +62,19 @@ function ProductDetails() {
   };
 
   const handleUserChosenQuantity = (event) => {
-    setUserChosenQuantity(event.target.value)
+    setUserChosenQuantity(event.target.value);
   };
-  
+
   const handleAddToCart = () => {
-    console.log(userSelectedColor)
-    console.log(userSelectedSize)
-    console.log(userChosenQuantity)
-    console.log(product.id)      
-  }
+    console.log(userSelectedColor);
+    console.log(userSelectedSize);
+    console.log(userChosenQuantity);
+    console.log(product.id);
+    console.log(currentAddress.country)
+  };
 
   //143
-  
+
   return (
     <main className="mb-4 mt-4">
       <div className="container">
@@ -184,7 +196,7 @@ function ProductDetails() {
                           <b>Quantity</b>
                         </label>
                         <input
-                          style={{ width: '190px' }}
+                          style={{ width: "190px" }}
                           type="number"
                           id="typeNumber"
                           className="form-control quantity"
