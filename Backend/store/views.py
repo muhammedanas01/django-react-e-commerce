@@ -54,7 +54,9 @@ class CartApiView(generics.ListCreateAPIView):
         size = payload.get('size')
         color = payload.get('color')
         cart_id = payload.get('cart_id')
-       
+
+        print("#######################################",user_id)
+
         product = Product.objects.get(id=product_id)
         #if user is guest user
         if user_id != "undefined":
@@ -86,7 +88,7 @@ class CartApiView(generics.ListCreateAPIView):
             cart.cart_id = cart_id
 
             service_fee_percentage = 10 / 100
-            cart.service_fee = service_fee_percentage * cart.sub_total
+            cart.service_fee = Decimal(service_fee_percentage) * cart.sub_total
 
             cart.total = cart.sub_total + cart.shipping_amount + cart.service_fee + cart.tax
             cart.save()
@@ -95,7 +97,7 @@ class CartApiView(generics.ListCreateAPIView):
 
         else:
             #if cart dosen't exist
-            cart = Cart()
+            cart = Cart() # creates a new cart
             cart.product = product
             cart.user = user
             cart.item_quantity =  item_quantity
@@ -109,7 +111,7 @@ class CartApiView(generics.ListCreateAPIView):
             cart.cart_id = cart_id
 
             service_fee_percentage = 10 / 100
-            cart.service_fee = service_fee_percentage * cart.sub_total
+            cart.service_fee = Decimal(service_fee_percentage) * cart.sub_total
 
             cart.total = cart.sub_total + cart.shipping_amount + cart.service_fee + cart.tax
             cart.save()

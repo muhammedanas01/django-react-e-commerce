@@ -187,7 +187,7 @@ class Color(models.Model):
 # Represents items that a user is currently considering for purchase but has not yet ordered
 class Cart(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     item_quantity = models.PositiveIntegerField(default=0)
     price = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
     sub_total =  models.DecimalField(default=0.00, max_digits=12, decimal_places=2)

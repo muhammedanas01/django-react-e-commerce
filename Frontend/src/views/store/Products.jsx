@@ -28,7 +28,7 @@ function Products() {
           <section className="text-center">
             <div className="row">
               {products?.map((p, index) => (
-                <div className="col-lg-4 col-md-12 mb-4">
+                <div className="col-lg-4 col-md-12 mb-4"key={index}>
                   <div className="card">
                     <div
                       className="bg-image hover-zoom ripple"
@@ -198,6 +198,7 @@ function Products() {
                   <button
                     className="col-lg-2 btn p-0 d-flex flex-column align-items-center"
                     style={{ border: "none", backgroundColor: "transparent" }}
+                    key={index}
                   >
                     <img
                       src={c.image}

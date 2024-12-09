@@ -32,7 +32,7 @@ admin.site.register(Category)
 
 ##
 class CartAdmin(admin.ModelAdmin):
-    list_display = ['user', 'product', 'item_quantity', 'price', 'sub_total', 'total', 'date']
+    list_display = ['user', 'cart_id', 'product', 'item_quantity', 'total']
     search_fields = ['Product', 'cart_id']
     list_filter = ['date', 'product']
     ordering = ['-date']

@@ -10,7 +10,7 @@ function UserData() {
             const token = refresh_token
             decoded = jwtDecode(token)
         } else {
-            console.log("User token does not exist")
+           
         }
     } catch(error){
         console.log(error)

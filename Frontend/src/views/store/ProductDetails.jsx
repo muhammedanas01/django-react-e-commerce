@@ -2,29 +2,33 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import apiInstance from "../../utils/axios";
+
 import GetCurrentAddress from "../plugin/UserCountry";
+import UserData from "../plugin/UserData";
+import CartID from "../plugin/CartId";
 
 import "../Style/product-detail.css";
 
 function ProductDetails() {
-  // auto detects slug in url
-  const param = useParams();
-  // here using slug we will identify which product it is.
-  const [product, setProduct] = useState([]);
-
-  const currentAddress = GetCurrentAddress();
-  
-
-  // this is to get color, gallery, size and  spec of product.
-  const [specifications, setSpecifications] = useState([]);
+  const param = useParams(); // auto detects slug in url
+  const [product, setProduct] = useState([]); // here using slug we will identify which product it is in useEffect and will set value for product.
+  const [specifications, setSpecifications] = useState([]); // this is to set color, gallery, size and  spec of product.
   const [gallery, setGallery] = useState([]);
   const [colors, setColors] = useState([]);
   const [size, setSize] = useState([]);
+  const [userSelectedColor, setuserSelectedColor] =
+    useState(" no color selected");
+  const [userSelectedSize, setUserSelectedSize] = useState(" no size selected");
+  const [userChosenQuantity, setUserChosenQuantity] = useState(1);
+
+  const currentAddress = GetCurrentAddress();
+  const userData = UserData();
+  const cartId = CartID();
 
   useEffect(() => {
-    // this prodect-detail/<slug> endpoint is to connect backend and from backend using slug we will get the particular product.
     apiInstance.get(`product-detail/${param.slug}/`).then((response) => {
-      // this is all availabe color,size, and photos of product in backend for displaying to user
+      // this prodect-detail/<slug> endpoint is to connect backend, and from backend using slug we will get the particular product.
+      // geting and setting color,size, and photos of product from backend for displaying to user
       setProduct(response.data);
       setSpecifications(response.data.specification);
       setColors(response.data.color);
@@ -34,27 +38,26 @@ function ProductDetails() {
   }, [param.slug]);
 
   useEffect(() => {
+    console.log("from useEffect")
     if (currentAddress) {
-      console.log(currentAddress);
+      console.log("from useEffect", currentAddress);
     }
-  }, [currentAddress]);
-
-  // this is for when adding to cart
-  const [userSelectedColor, setuserSelectedColor] =
-    useState(" no color selected");
-  const [userSelectedSize, setUserSelectedSize] = useState(" no size selected");
-  const [userChosenQuantity, setUserChosenQuantity] = useState(1);
+    if (userData) {
+      console.log(userData.user_id);
+    }
+    if (cartId) {
+      console.log(cartId);
+    }
+  }, []);
 
   const handleColorButtonClick = (event) => {
-    // when we clicked color .color_button grab the colosest element which has  a class name of color_name
     const colorNameInput = event.target
       .closest(".color_button")
       .parentNode.querySelector(".color_name");
     setuserSelectedColor(colorNameInput.value);
   };
-
+  // when we click size .size_button or .color_button it grab the colosest element which has a class name of size_name, color_name
   const handleSizeButtonClick = (event) => {
-    // when we click size .size_button grab the colosest element which has a class name of size_name
     const sizeNameInput = event.target
       .closest(".size_button")
       .parentNode.querySelector(".size_name");
@@ -65,15 +68,26 @@ function ProductDetails() {
     setUserChosenQuantity(event.target.value);
   };
 
-  const handleAddToCart = () => {
-    console.log(userSelectedColor);
-    console.log(userSelectedSize);
-    console.log(userChosenQuantity);
-    console.log(product.id);
-    console.log(currentAddress.country)
-  };
+  const handleAddToCart = async () => {
+    try {
+      const formData = new FormData();
+      //Note: should use the same key in server to fetch value
+      formData.append("user_id", userData?.user_id);
+      formData.append("cart_id", cartId);
+      formData.append("product_id", product.id);
+      formData.append("item_quantity", userChosenQuantity);
+      formData.append("price", product.price);
+      formData.append("shipping_amount", product.shipping_amount);
+      formData.append("country", currentAddress.country);
+      formData.append("size", userSelectedSize);
+      formData.append("color", userSelectedColor);
 
-  //143
+      const response = await apiInstance.post(`cart-view/`, formData);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <main className="mb-4 mt-4">
@@ -103,7 +117,7 @@ function ProductDetails() {
                 </div>
                 <div className="mt-3 d-flex">
                   {gallery.map((g, index) => (
-                    <div className="p-3">
+                    <div className="p-3" key={index}>
                       <img
                         src={g.image}
                         style={{
@@ -176,7 +190,7 @@ function ProductDetails() {
                         <td>{product.category?.title}</td>
                       </tr>
                       {specifications.map((s, index) => (
-                        <tr>
+                        <tr key={index}>
                           <th className="ps-0 w-25" scope="row">
                             <strong>{s.title}</strong>
                           </th>
@@ -371,7 +385,7 @@ function ProductDetails() {
                     <td>{product.category?.title}</td>
                   </tr>
                   {specifications.map((s, index) => (
-                    <tr>
+                    <tr key={index}>
                       <th className="ps-0 w-25" scope="row">
                         <strong>{s.title}</strong>
                       </th>
