@@ -1,13 +1,21 @@
 import React, { useEffect, useState } from "react";
 import apiInstance from "../../utils/axios";
 import { Link } from "react-router-dom";
+import Swal from 'sweetalert2'
 
 import useCurrentAddress from "../plugin/UserCountry";
 import UserData from "../plugin/UserData";
 import CartID from "../plugin/CartId";
 
 import "../Style/product-card-btn.css";
-// category/
+
+const Toast = Swal.mixin({
+  toast:true,
+  position:"top",
+  timer:1500,
+  timerProgressBar: true
+})
+
 function Products() {
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState([]);
@@ -45,10 +53,6 @@ function Products() {
     }));
   };
 
-  console.log(selectedSize);
-  console.log(selectedColor);
-  console.log(selectedProduct);
-
   useEffect(() => {
     apiInstance.get(`products/`).then((response) => {
       setProducts(response.data);
@@ -76,6 +80,10 @@ function Products() {
 
       const response = await apiInstance.post(`cart-view/`, formData);
       console.log(response.data);
+      Toast.fire({
+        icon:"success",
+        title: response.data.message
+      })
     } catch (error) {
       console.log(error);
     }

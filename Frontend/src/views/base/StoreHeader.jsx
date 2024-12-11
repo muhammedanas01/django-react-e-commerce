@@ -1,10 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useAuthStore } from "../../store/auth";
+
 import "../Style/StoreHeader.css"; // Ensure the path is correct
 
 function StoreHeader() {
+  const [isLoggedIn, user] = useAuthStore((state) => [
+    state.setLoggedIn,
+    state.extractUserDetails,
+  ]);
+
+  console.log("hello", isLoggedIn());
+  console.log(user());
+
   return (
-      <div>
+    <div>
       <nav className="navbar navbar-expand-lg navbar-dark sticky-navbar">
         <div className="container">
           <Link className="navbar-brand" to="/">
@@ -142,12 +152,26 @@ function StoreHeader() {
                 Search
               </button>
             </div>
-            <Link className="btn btn-primary me-2" to="/login">
-              Login
-            </Link>
-            <Link className="btn btn-register me-2" to="/register">
-              Register
-            </Link>
+            {isLoggedIn() ? (
+              <>
+                <Link className="btn btn-primary me-2" to="/logout">
+                  Logout
+                </Link>
+                <Link className="btn btn-primary me-2" to="/home">
+                  Dashboard
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link className="btn btn-primary me-2" to="/login">
+                  Login
+                </Link>
+                <Link className="btn btn-register me-2" to="/register">
+                  Register
+                </Link>
+              </>
+            )}
+
             <Link className="btn btn-danger" to="/cart/">
               <i className="fas fa-shopping-cart"></i> Cart
             </Link>
@@ -157,7 +181,7 @@ function StoreHeader() {
       <div style={{ height: "70px" }}>
         <p>Scroll down to test sticky navbar</p>
       </div>
-      </div>
+    </div>
   );
 }
 
