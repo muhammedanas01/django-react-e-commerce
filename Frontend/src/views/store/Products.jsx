@@ -2,11 +2,52 @@ import React, { useEffect, useState } from "react";
 import apiInstance from "../../utils/axios";
 import { Link } from "react-router-dom";
 
+import useCurrentAddress from "../plugin/UserCountry";
+import UserData from "../plugin/UserData";
+import CartID from "../plugin/CartId";
+
 import "../Style/product-card-btn.css";
 // category/
 function Products() {
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState([]);
+  const [colorValue, setColorValue] = useState("No Color");
+  const [sizeValue, setSizeValue] = useState("No Size");
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedColor, setSelectedColor] = useState({});
+  const [selectedSize, setSelectedSize] = useState({});
+
+  const currentAddress = useCurrentAddress();
+  const userData = UserData();
+  const cartId = CartID();
+
+  const default_quantity = 1;
+
+  const handleColorButtonClick = (event, product_id, colorName) => {
+    setColorValue(colorName);
+    setSelectedProduct(product_id);
+
+    setSelectedColor((previousSelectedColor) => ({
+      // previousselected color has the value of selectedColor, it's provided by setSelectedColor
+      ...previousSelectedColor, //Copy all previous entries into a new object
+      [product_id]: colorName, // If product_id is the same as an existing key, the new key-value pair [product_id]: colorName updates the value for that key. or If product_id is a new key, it adds the key-value pair to the new object.
+    }));
+  };
+
+  const handleSizeButtonClick = (event, product_id, sizeName) => {
+    setSizeValue(sizeName);
+    setSelectedProduct(product_id);
+
+    setSelectedSize((previousSelectedSize) => ({
+      // previousselected color has the value of selectedColor, it's provided by setSelectedColor
+      ...previousSelectedSize, //Copy all previous entries into a new object
+      [product_id]: sizeName, // If product_id is the same as an existing key, the new key-value pair [product_id]: colorName updates the value for that key. or If product_id is a new key, it adds the key-value pair to the new object.
+    }));
+  };
+
+  console.log(selectedSize);
+  console.log(selectedColor);
+  console.log(selectedProduct);
 
   useEffect(() => {
     apiInstance.get(`products/`).then((response) => {
@@ -20,7 +61,26 @@ function Products() {
     });
   }, []);
 
-  
+  const handleAddToCart = async (product_id, price, shipping_amount) => {
+    const formData = new FormData();
+    try {
+      formData.append("user_id", userData?.user_id);
+      formData.append("cart_id", cartId);
+      formData.append("product_id", product_id);
+      formData.append("price", price);
+      formData.append("shipping_amount", shipping_amount);
+      formData.append("country", currentAddress.countryName);
+      formData.append("size", selectedSize[product_id]);
+      formData.append("color", selectedColor[product_id]);
+      formData.append("item_quantity", default_quantity);
+
+      const response = await apiInstance.post(`cart-view/`, formData);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <main className="mt-5">
@@ -28,7 +88,7 @@ function Products() {
           <section className="text-center">
             <div className="row">
               {products?.map((p, index) => (
-                <div className="col-lg-4 col-md-12 mb-4"key={index}>
+                <div className="col-lg-4 col-md-12 mb-4" key={index}>
                   <div className="card">
                     <div
                       className="bg-image hover-zoom ripple"
@@ -42,7 +102,7 @@ function Products() {
                           style={{
                             width: "100%",
                             height: "250px",
-                            objectFit: "cover", 
+                            objectFit: "cover",
                           }}
                         />
                       </Link>
@@ -96,77 +156,66 @@ function Products() {
                           aria-labelledby="dropdownMenuClickable"
                           style={{ backgroundColor: "white" }}
                         >
-                          <div className="d-flex flex-column">
-                            <li className="p-1">
-                              <b>Size</b>: XL
-                            </li>
-                            <div className="p-1 mt-0 pt-0 d-flex flex-wrap">
-                              <li>
-                                <button className="btn btn-black btn-sm me-2 mb-1">
-                                  S
-                                </button>
+                          {p.size && p.size.length > 0 && (
+                            <div className="d-flex flex-column">
+                              <li className="p-1">
+                                <b>Size</b>:<strong>{selectedSize[p.id]}</strong>
                               </li>
-                              <li>
-                                <button className="btn btn-black btn-sm me-2 mb-1">
-                                  M
-                                </button>
-                              </li>
-                              <li>
-                                <button className="btn btn-black btn-sm me-2 mb-1">
-                                  L
-                                </button>
-                              </li>
-                              <li>
-                                <button className="btn btn-black btn-sm me-2 mb-1">
-                                  XL
-                                </button>
-                              </li>
+                              <div className="p-1 mt-0 pt-0 d-flex flex-wrap">
+                                {p.size.map((size, index) => (
+                                  <li key={index}>
+                                    <button
+                                      className="btn btn-black btn-sm me-2 mb-1"
+                                      type="button"
+                                      onClick={(e) =>
+                                        handleSizeButtonClick(
+                                          e,
+                                          p.id,
+                                          size.name
+                                        )
+                                      }
+                                    >
+                                      {size.name}
+                                    </button>
+                                  </li>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                          <div className="d-flex flex-column mt-3">
-                            <li className="p-1">
-                              <b>Color</b>: Red
-                            </li>
-                            <div className="p-1 mt-0 pt-0 d-flex flex-wrap">
-                              <li>
-                                <button
-                                  className="btn btn-sm me-2 mb-1"
-                                  style={{
-                                    backgroundColor: "red",
-                                    borderRadius: "50%",
-                                    width: "30px",
-                                    height: "30px",
-                                  }}
-                                />
+                          )}
+                          {p.color && p.color.length > 0 && (
+                            <div className="d-flex flex-column mt-3">
+                              <li className="p-1">
+                                <b>Color</b>:<strong>{selectedColor[p.id]}</strong>
                               </li>
-                              <li>
-                                <button
-                                  className="btn btn-sm me-2 mb-1 p-2"
-                                  style={{
-                                    backgroundColor: "green",
-                                    borderRadius: "50%",
-                                    width: "30px",
-                                    height: "30px",
-                                  }}
-                                />
-                              </li>
-                              <li>
-                                <button
-                                  className="btn btn-sm me-2 mb-1 p-2"
-                                  style={{
-                                    backgroundColor: "brown",
-                                    borderRadius: "50%",
-                                    width: "30px",
-                                    height: "30px",
-                                  }}
-                                />
-                              </li>
+                              <div className="p-1 mt-0 pt-0 d-flex flex-wrap">
+                                {p.color.map((color, index) => (
+                                  <li key={index}>
+                                    <button
+                                      className="btn btn-sm me-2 mb-1 color_button"
+                                      onClick={(e) =>
+                                        handleColorButtonClick(
+                                          e,
+                                          p.id,
+                                          color.name
+                                        )
+                                      }
+                                      style={{
+                                        backgroundColor: color.name,
+                                        borderRadius: "50%",
+                                        width: "30px",
+                                        height: "30px",
+                                      }}
+                                    />
+                                  </li>
+                                ))}
+                              </div>
                             </div>
-                          </div>
+                          )}
                           <div className="d-flex mt-3 p-1">
                             <button
                               type="button"
                               className="btn btn-black me-1 mb-1"
+                              onClick={() => handleAddToCart(p.id, p.price, p.shipping_amount)}
                             >
                               <i className="fas fa-shopping-cart" />
                             </button>

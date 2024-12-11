@@ -222,8 +222,7 @@ function ProductDetails() {
                     </div>
 
                     {/* Size  this coloums renders only if there is*/}
-                    {size &&
-                      size.length > 0 && ( // Check if the size array exists and is not empty
+                    {size && size.length > 0 && ( // Check if the size array exists and is not empty
                         <div className="col-md-6 mb-4">
                           <div className="form-outline">
                             <label className="form-label" htmlFor="typeNumber">

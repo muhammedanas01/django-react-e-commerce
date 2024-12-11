@@ -1,21 +1,25 @@
 import { useState, useEffect } from "react";
-// this is a functional component
 
-function GetCurrentAddress() {
+function useCurrentAddress() {
   const [address, setAddress] = useState(null);
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const { latitude, longitude } = position.coords;
-      const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
-      fetch(url)
-        .then((response) => response.json()) // coverting response to json format)
-        .then((data) => setAddress(data.address))
-        .catch((error) => console.log('error fetching adress:', error))
-    });
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`;
+        fetch(url)
+          .then((response) => response.json())
+          .then((data) => setAddress(data)) // Store the full response
+          .catch((error) => console.log("Error fetching address:", error));
+      },
+      (error) => console.log("Geolocation error:", error)
+    );
   }, []);
 
-  return address
+  return address;
 }
 
-export default GetCurrentAddress;
+export default useCurrentAddress;
+
+
