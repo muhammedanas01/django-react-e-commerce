@@ -35,7 +35,7 @@ class ProductDetailApiView(generics.RetrieveAPIView):
        slug = self.kwargs['slug'] # slug from url
        return Product.objects.get(slug = slug)
 
-""" this view is for to handle the cart """  
+""" this view is to add product to cart"""  
 class CartApiView(generics.ListCreateAPIView):
     queryset = Cart.objects.all()
     serializer_class = CartSerializers
@@ -117,5 +117,24 @@ class CartApiView(generics.ListCreateAPIView):
             cart.save()
 
             return Response({'message': "cart added Successfully."}, status=status.HTTP_201_CREATED)
+        
+"""this view is to list all products in cart"""
+class CartListView(generics.ListAPIView):
+    serializer_class = CartSerializers
+    permission_classes = [AllowAny]
+    queryset = Cart.objects.all()
+
+    def get_queryset(self):
+        cart_id = self.kwargs['cart_id']#key is must
+        user_id = self.kwargs.get('user_id')#if no user user_id key it wont raise error if user it takes value
+
+        if user_id is not None:
+            user = User.objects.get(id=user_id)
+            queryset = Cart.objects.filter(user=user, cart_id=cart_id)
+        else:
+            queryset = Cart.objects.filter(cart_id=cart_id)
+
+        return queryset
+
 
 
