@@ -20,6 +20,7 @@ import CreatePassword from "./views/auth/CreatePassword"; // request accepted an
 
 import Products from "./views/store/Products";
 import ProductDetails from "./views/store/ProductDetails";
+import Cart from "./views/store/Cart";
 
 function App() {
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
@@ -41,6 +42,7 @@ function App() {
         {/* for store */}
         <Route path="/" element={<Products />} />
         <Route path="/product-detail/:slug/" element={<ProductDetails />} />
+        <Route path="/cart" element={<Cart />} />
       </Routes>
       <StoreFooter />
     </BrowserRouter>

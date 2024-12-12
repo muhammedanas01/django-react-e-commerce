@@ -172,7 +172,7 @@ function StoreHeader() {
               </>
             )}
 
-            <Link className="btn btn-danger" to="/cart/">
+            <Link className="btn btn-danger" to="/cart">
               <i className="fas fa-shopping-cart"></i> Cart
             </Link>
           </div>
