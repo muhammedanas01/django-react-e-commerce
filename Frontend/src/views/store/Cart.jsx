@@ -21,6 +21,16 @@ function Cart() {
   const [cart, setCart] = useState([]);
   const [cartTotal, setCartTotal] = useState([]);
   const [productQuantity, setProductQuantity] = useState({});
+  //controlled inputs
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [landmark, setLandmark] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [country, setCountry] = useState("");
 
   const userData = UserData();
   const cartId = CartID();
@@ -126,6 +136,53 @@ function Cart() {
       console.log(error);
     }
   };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    switch (name) {
+      case "fullName":
+        setFullName(value);
+        break;
+      case "email":
+        setEmail(value);
+        break;
+      case "mobile":
+        setMobile(value);
+        break;
+      case "address":
+        setAddress(value);
+        break;
+      case "city":
+        setCity(value);
+        break;
+      case "state":
+        setState(value);
+        break;
+      case "landmark":
+        setLandmark(value);
+        break;
+      case "postalCode":
+        setPostalCode(value);
+        break;
+      case "country":
+        setCountry(value);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const creatOrder = () => {
+    console.log(fullName)
+    console.log(email)
+    console.log(mobile)
+    console.log(address)
+    console.log(city)
+    console.log(state)
+    console.log(landmark)
+    console.log(postalCode)
+    console.log(country)
+  }
 
   return (
     <div>
@@ -262,10 +319,12 @@ function Cart() {
                                 <i className="fas fa-user"></i> Full Name
                               </label>
                               <input
+                                className="form-control"
                                 type="text"
                                 id="fullName"
                                 name="fullName"
-                                className="form-control"
+                                value={fullName}
+                                onChange={handleChange}
                               />
                             </div>
                           </div>
@@ -282,6 +341,8 @@ function Cart() {
                                 id="email"
                                 className="form-control"
                                 name="email"
+                                value={email}
+                                onChange={handleChange}
                               />
                             </div>
                           </div>
@@ -295,6 +356,8 @@ function Cart() {
                                 id="mobile"
                                 className="form-control"
                                 name="mobile"
+                                value={mobile}
+                                onChange={handleChange}
                               />
                             </div>
                           </div>
@@ -312,6 +375,8 @@ function Cart() {
                                 id="address"
                                 className="form-control"
                                 name="address"
+                                value={address}
+                                onChange={handleChange}
                               />
                             </div>
                           </div>
@@ -325,6 +390,8 @@ function Cart() {
                                 id="city"
                                 className="form-control"
                                 name="city"
+                                value={city}
+                                onChange={handleChange}
                               />
                             </div>
                           </div>
@@ -339,6 +406,8 @@ function Cart() {
                                 id="state"
                                 className="form-control"
                                 name="state"
+                                value={state}
+                                onChange={handleChange}
                               />
                             </div>
                           </div>
@@ -352,6 +421,8 @@ function Cart() {
                                 id="landmark"
                                 className="form-control"
                                 name="landmark"
+                                value={landmark}
+                                onChange={handleChange}
                               />
                             </div>
                           </div>
@@ -369,6 +440,8 @@ function Cart() {
                                 id="postalCode"
                                 className="form-control"
                                 name="postalCode"
+                                value={postalCode}
+                                onChange={handleChange}
                               />
                             </div>
                           </div>
@@ -382,6 +455,8 @@ function Cart() {
                                 id="country"
                                 className="form-control"
                                 name="country"
+                                value={country}
+                                onChange={handleChange}
                               />
                             </div>
                           </div>
@@ -415,8 +490,8 @@ function Cart() {
                           <span>Grand Total</span>
                           <span>AED {cartTotal.total?.toFixed(2)}</span>
                         </div>
-                        <button className="btn btn-primary btn-rounded w-100">
-                          Go to Checkout
+                        <button onClick={creatOrder} className="btn btn-primary btn-rounded w-100">
+                          Proceed to Checkout
                         </button>
                         <div className="card p-3 mt-4">
                           <label htmlFor="couponCode" className="form-label">
