@@ -29,15 +29,21 @@ urlpatterns = [
     path('product-detail/<slug>/', store_views.ProductDetailApiView.as_view(), name='product-detail'),
     # for add to cart 
     path('cart-view/', store_views.CartApiView.as_view(), name='cart-view'),
-    # for cart list with user_id
+    # for cart list with user_id 
     path('cart-list/<str:cart_id>/<int:user_id>/', store_views.CartListView.as_view(), name='cart-list'),
     # for cart list without user_id
     path('cart-list/<str:cart_id>/', store_views.CartListView.as_view(), name='cart-list-2'),
-    #
+    # cart summary
     path('cart-detail/<str:cart_id>/<int:user_id>/', store_views.CartDetailView.as_view(), name='cart-Detail'),
-    #
+    # cart summary without user_id
     path('cart-detail/<str:cart_id>/', store_views.CartDetailView.as_view(), name='cart-Detail-2'),
-    #
+    # for deleting item in cart
+    path('cart-item-delete/<str:cart_id>/<str:item_id>/<str:user_id>/', store_views.CartItemDeleteApiView.as_view(),),
+    # for deleting item in cart without user_id
+    path('cart-item-delete/<str:cart_id>/<str:item_id>/', store_views.CartItemDeleteApiView.as_view(),),
+
+
+
 
 
 
