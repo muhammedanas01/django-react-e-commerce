@@ -49,7 +49,7 @@ function Cart() {
       //with user id
       useEffect(() => {
         fetchCartData(cartId, userData?.user_id);
-        fetchCartTotal(cartId, userData?.user_id);
+        fetchCartTotal(cartId, userData?.user_id); //cart summary
       }, []);
     } else {
       useEffect(() => {
@@ -98,11 +98,30 @@ function Cart() {
 
       fetchCartData(cartId, userData?.user_id);
       fetchCartTotal(cartId, userData?.user_id);
-      
+
       Toast.fire({
         icon: "success",
         title: "quantity changed",
       });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCartItemDelete = async (item_id) => {
+    try {
+      const url = userData
+        ? `cart-item-delete/${cartId}/${item_id}/${userData?.userId}/`
+        : `cart-item-delete/${cartId}/${item_id}/`;
+
+      await apiInstance.delete(url);
+      Toast.fire({
+        icon: "success",
+        title: "item removed from cart",
+      });
+
+      fetchCartData(cartId, userData?.user_id);
+      fetchCartTotal(cartId, userData?.user_id);
     } catch (error) {
       console.log(error);
     }
@@ -182,7 +201,10 @@ function Cart() {
                                   </span>
                                 </p>
                                 <p className="mt-3">
-                                  <button className="btn btn-danger">
+                                  <button
+                                    onClick={() => handleCartItemDelete(c.id)}
+                                    className="btn btn-danger"
+                                  >
                                     <small>
                                       <i className="fas fa-trash me-2" /> Remove
                                     </small>

@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import Swal from 'sweetalert2'
+
 
 import apiInstance from "../../utils/axios";
 
-import GetCurrentAddress from "../plugin/UserCountry";
+import useCurrentAddress from "../plugin/UserCountry";
 import UserData from "../plugin/UserData";
 import CartID from "../plugin/CartId";
 
 import "../Style/product-detail.css";
+
+const Toast = Swal.mixin({
+  toast:true,
+  position:"top",
+  timer:1500,
+  timerProgressBar: true
+})
 
 function ProductDetails() {
   const param = useParams(); // auto detects slug in url
@@ -21,7 +30,7 @@ function ProductDetails() {
   const [userSelectedSize, setUserSelectedSize] = useState(" no size selected");
   const [userChosenQuantity, setUserChosenQuantity] = useState(1);
 
-  const currentAddress = GetCurrentAddress();
+  const currentAddress = useCurrentAddress();
   const userData = UserData();
   const cartId = CartID();
 
@@ -78,12 +87,17 @@ function ProductDetails() {
       formData.append("item_quantity", userChosenQuantity);
       formData.append("price", product.price);
       formData.append("shipping_amount", product.shipping_amount);
-      formData.append("country", currentAddress.country);
+      formData.append("country", currentAddress.countryName);
       formData.append("size", userSelectedSize);
       formData.append("color", userSelectedColor);
 
       const response = await apiInstance.post(`cart-view/`, formData);
       console.log(response.data);
+
+      Toast.fire({
+        icon:"success",
+        title: response.data.message
+      })
     } catch (error) {
       console.log(error);
     }
