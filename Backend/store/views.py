@@ -55,8 +55,6 @@ class CartApiView(generics.ListCreateAPIView):
         color = payload.get('color')
         cart_id = payload.get('cart_id')
 
-        print("#######################################",user_id)
-
         product = Product.objects.get(id=product_id)
         #if user is guest user
         if user_id != "undefined":
@@ -81,13 +79,13 @@ class CartApiView(generics.ListCreateAPIView):
             cart.price = price
             cart.sub_total = Decimal(price) * int(item_quantity)
             cart.shipping_amount = Decimal(shipping_amount) * int(item_quantity)
-            cart.tax = int(item_quantity) * Decimal(tax_rate)
+            cart.tax = Decimal(cart.sub_total) * Decimal(tax_rate) 
             cart.color = color
             cart.size = size
             cart.country = country
             cart.cart_id = cart_id
 
-            service_fee_percentage = 10 / 100
+            service_fee_percentage = 2 / 100
             cart.service_fee = Decimal(service_fee_percentage) * cart.sub_total
 
             cart.total = cart.sub_total + cart.shipping_amount + cart.service_fee + cart.tax
@@ -104,13 +102,13 @@ class CartApiView(generics.ListCreateAPIView):
             cart.price = price
             cart.sub_total = Decimal(price) * int(item_quantity)
             cart.shipping_amount = Decimal(shipping_amount) * int(item_quantity)
-            cart.tax = int(item_quantity) * Decimal(tax_rate)
+            cart.tax = Decimal(cart.sub_total) * Decimal(tax_rate) 
             cart.color = color
             cart.size = size
             cart.country = country
             cart.cart_id = cart_id
 
-            service_fee_percentage = 10 / 100
+            service_fee_percentage = 2 / 100
             cart.service_fee = Decimal(service_fee_percentage) * cart.sub_total
 
             cart.total = cart.sub_total + cart.shipping_amount + cart.service_fee + cart.tax
@@ -136,5 +134,66 @@ class CartListView(generics.ListAPIView):
 
         return queryset
 
+class CartDetailView(generics.RetrieveAPIView):
+    serializer_class = CartSerializers
+    permission_classes = [AllowAny]
+    lookup_field = "cart_id"
+    #function to get queryset
+    def get_queryset(self):
+        cart_id = self.kwargs['cart_id']
+        user_id = self.kwargs.get('user_id')
 
+        if user_id is not None:
+            user = User.objects.get(id=user_id)
+            queryset = Cart.objects.filter(user=user, cart_id=cart_id)
+        else:
+            queryset = Cart.objects.filter(cart_id=cart_id)
 
+        return queryset
+    
+    # qty * shipping amount 
+    def calculate_shipping(self, cart_item):
+        return cart_item.shipping_amount
+    
+    # q
+    def calculate_tax(self, cart_item):
+        return cart_item.tax
+    
+    #service_fee_percentage * subtotal
+    def calculate_service_fee(self, cart_item):
+        return cart_item.service_fee
+    
+    # qty * price 
+    def calculate_sub_total(self, cart_item):
+        return cart_item.sub_total 
+    
+    # total =  cart.sub_total + cart.shipping_amount + cart.service_fee + cart.tax
+    def calculate_grand_total(self, cart_item):
+        return cart_item.total 
+    
+    #overiding default method
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        total_shipping = 0.0
+        total_tax = 0.0
+        total_service_fee = 0.0
+        total_sub_total = 0.0
+        grand_total = 0.0
+        
+        for cart_item in queryset:
+            total_shipping += float(self.calculate_shipping(cart_item))
+            total_tax += float(self.calculate_tax(cart_item))
+            total_service_fee += float(self.calculate_service_fee(cart_item))
+            total_sub_total += float(self.calculate_sub_total(cart_item))
+            grand_total += float(self.calculate_grand_total(cart_item))
+        data = {
+            'shipping': total_shipping ,
+            'tax': total_tax,
+            'service_fee': total_service_fee,
+            'sub_total': total_sub_total, 
+            'total': grand_total 
+        }
+        return Response(data)
+    
+    

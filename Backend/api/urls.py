@@ -33,8 +33,11 @@ urlpatterns = [
     path('cart-list/<str:cart_id>/<int:user_id>/', store_views.CartListView.as_view(), name='cart-list'),
     # for cart list without user_id
     path('cart-list/<str:cart_id>/', store_views.CartListView.as_view(), name='cart-list-2'),
-
-    #BPEEXSK4GUFVK2HMARFTTG6KGXGPTG
+    #
+    path('cart-detail/<str:cart_id>/<int:user_id>/', store_views.CartDetailView.as_view(), name='cart-Detail'),
+    #
+    path('cart-detail/<str:cart_id>/', store_views.CartDetailView.as_view(), name='cart-Detail-2'),
+    #
 
 
 
