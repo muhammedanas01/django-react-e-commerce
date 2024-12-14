@@ -29,6 +29,7 @@ function Products() {
   const userData = UserData();
   const cartId = CartID();
 
+  // when adding to cart from list of products there no input given for quantity so it is assigned into defaultQuantity
   const default_quantity = 1;
 
   const handleColorButtonClick = (event, product_id, colorName) => {
@@ -80,6 +81,7 @@ function Products() {
 
       const response = await apiInstance.post(`cart-view/`, formData);
       console.log(response.data);
+      console.log(formData)
       Toast.fire({
         icon:"success",
         title: response.data.message

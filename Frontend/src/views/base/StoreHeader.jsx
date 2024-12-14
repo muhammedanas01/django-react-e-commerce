@@ -1,18 +1,18 @@
 import React from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store/auth";
 
-import "../Style/StoreHeader.css"; // Ensure the path is correct
+import Cart from "../store/Cart";
+
+import "../Style/StoreHeader.css"; 
 
 function StoreHeader() {
   const [isLoggedIn, user] = useAuthStore((state) => [
     state.setLoggedIn,
     state.extractUserDetails,
   ]);
-
-  console.log("hello", isLoggedIn());
-  console.log(user());
-
+  
   return (
     <div>
       <nav className="navbar navbar-expand-lg navbar-dark sticky-navbar">

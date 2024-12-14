@@ -25,6 +25,10 @@ import Cart from "./views/store/Cart";
 function App() {
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
 
+  
+
+ 
+
   useEffect(() => {
     initializeAuth();
   }, [initializeAuth]);

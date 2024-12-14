@@ -4,14 +4,27 @@ import { Link } from "react-router-dom";
 
 import CartID from "../plugin/CartId";
 import UserData from "../plugin/UserData";
+import useCurrentAddress from "../plugin/UserCountry";
+
 import apiInstance from "../../utils/axios";
+
+import Swal from "sweetalert2";
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top",
+  timer: 1300,
+  timerProgressBar: true,
+});
 
 function Cart() {
   const [cart, setCart] = useState([]);
-  console.log(cart);
+  const [cartTotal, setCartTotal] = useState([]);
+  const [productQuantity, setProductQuantity] = useState({});
 
   const userData = UserData();
   const cartId = CartID();
+  const currentAddress = useCurrentAddress();
 
   const fetchCartData = (cartId, userId) => {
     const url = userId
@@ -22,18 +35,79 @@ function Cart() {
     });
   };
 
+  const fetchCartTotal = (cartId, userId) => {
+    const url = userId
+      ? `cart-detail/${cartId}/${userId}/`
+      : `cart-detail/${cartId}/`;
+    apiInstance.get(url).then((response) => {
+      setCartTotal(response.data);
+    });
+  };
+
   if (cartId !== null || cartId !== undefined) {
     if (userData !== undefined) {
       //with user id
       useEffect(() => {
         fetchCartData(cartId, userData?.user_id);
+        fetchCartTotal(cartId, userData?.user_id);
       }, []);
     } else {
       useEffect(() => {
         fetchCartData(cartId, null);
+        fetchCartTotal(cartId, null);
       }, []);
     }
   }
+
+  useEffect(() => {
+    const initialQuantity = {};
+    cart.forEach((c) => {
+      initialQuantity[c.product?.id] = c.item_quantity;
+    });
+    setProductQuantity(initialQuantity);
+  }, [cart]);
+
+  const handleQuantityChange = (e, product_id) => {
+    const quantity = e.target.value;
+    setProductQuantity((prevProductQuantity) => ({
+      ...prevProductQuantity,
+      [product_id]: quantity,
+    }));
+  };
+
+  const cartUpdated = async (
+    product_id,
+    price,
+    shipping_amount,
+    size,
+    color
+  ) => {
+    const newQty = productQuantity[product_id];
+    const formData = new FormData();
+    try {
+      formData.append("user_id", userData?.user_id);
+      formData.append("cart_id", cartId);
+      formData.append("product_id", product_id);
+      formData.append("price", price);
+      formData.append("shipping_amount", shipping_amount);
+      formData.append("country", currentAddress.countryName);
+      formData.append("size", size);
+      formData.append("color", color);
+      formData.append("item_quantity", newQty);
+      const response = await apiInstance.post(`cart-view/`, formData);
+
+      fetchCartData(cartId, userData?.user_id);
+      fetchCartTotal(cartId, userData?.user_id);
+      
+      Toast.fire({
+        icon: "success",
+        title: "quantity changed",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       {cart && cart.length > 0 ? (
@@ -45,7 +119,8 @@ function Cart() {
                   <div className="row gx-lg-5 mb-5">
                     <div className="col-lg-8 mb-4 mb-md-0">
                       <section className="mb-5">
-                        {cart && cart.length > 0 && (
+                        {cart &&
+                          cart.length > 0 &&
                           cart.map((c, index) => (
                             <div key={index} className="row border-bottom mb-4">
                               <div className="col-md-2 mb-4 mb-md-0">
@@ -53,7 +128,9 @@ function Cart() {
                                   className="bg-image ripple rounded-5 mb-4 overflow-hidden d-block"
                                   data-ripple-color="light"
                                 >
-                                  <Link to="">
+                                  <Link
+                                    to={`/product-detail/${c.product.slug}/`}
+                                  >
                                     <img
                                       src={c.product.image}
                                       className="w-100"
@@ -98,7 +175,7 @@ function Cart() {
                                 </p>
                                 <p className="mb-0">
                                   <span className="text-muted me-2">
-                                    Vendor:
+                                    Vendor:{c.tax}
                                   </span>
                                   <span>
                                     {c.product.vendor.name || "Unknown"}
@@ -118,12 +195,27 @@ function Cart() {
                                   <div className="form-outline">
                                     <input
                                       type="number"
+                                      id="typeNumber"
                                       className="form-control"
-                                      value={c.item_quantity || 1}
+                                      value={productQuantity[c.product.id]}
                                       min={1}
+                                      onChange={(e) =>
+                                        handleQuantityChange(e, c.product.id)
+                                      }
                                     />
                                   </div>
-                                  <button className="ms-2 btn btn-primary">
+                                  <button
+                                    onClick={() =>
+                                      cartUpdated(
+                                        c.product.id,
+                                        c.product.price,
+                                        c.product.shipping_amount,
+                                        c.color,
+                                        c.size
+                                      )
+                                    }
+                                    className="ms-2 btn btn-primary"
+                                  >
                                     <i className="fas fa-rotate-right"></i>
                                   </button>
                                 </div>
@@ -135,8 +227,7 @@ function Cart() {
                                 </h5>
                               </div>
                             </div>
-                          ))
-                        )} 
+                          ))}
                       </section>
 
                       {/* Personal Information */}
@@ -277,29 +368,30 @@ function Cart() {
                     </div>
 
                     {/* Summary Section */}
+
                     <div className="col-lg-4 mb-4 mb-md-0">
                       <section className="shadow-4 p-4 rounded-5 mb-4">
                         <h5 className="mb-3">Cart Summary</h5>
                         <div className="d-flex justify-content-between mb-3">
                           <span>Sub Total</span>
-                          <span>$10.00</span>
+                          <span>AED {cartTotal.sub_total?.toFixed(2)}</span>
                         </div>
                         <div className="d-flex justify-content-between">
                           <span>Shipping</span>
-                          <span>$10.00</span>
+                          <span>AED {cartTotal.shipping?.toFixed(2)}</span>
                         </div>
                         <div className="d-flex justify-content-between">
                           <span>Tax</span>
-                          <span>$10.00</span>
+                          <span>AED {cartTotal.tax?.toFixed(2)}</span>
                         </div>
                         <div className="d-flex justify-content-between">
                           <span>Service Fee</span>
-                          <span>$10.00</span>
+                          <span>AED {cartTotal.service_fee?.toFixed(2)}</span>
                         </div>
                         <hr className="my-4" />
                         <div className="d-flex justify-content-between fw-bold mb-5">
-                          <span>Total</span>
-                          <span>$10.00</span>
+                          <span>Grand Total</span>
+                          <span>AED {cartTotal.total?.toFixed(2)}</span>
                         </div>
                         <button className="btn btn-primary btn-rounded w-100">
                           Go to Checkout
