@@ -231,7 +231,7 @@ class CartOrder(models.Model):
     shipping_amount = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
     service_fee = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
     tax = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
-    total = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)#grand total
+    total = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)  # grand total
 
     payment_status = models.CharField(choices=PAYMENT_STATUS, max_length=100, default="Pending")
     order_status = models.CharField(choices=ORDER_STATUS, max_length=100, default="Pending")
@@ -258,7 +258,7 @@ class CartOrder(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.order_id
+        return str(self.order_id)
 
 
 # represents each individual item that is part of the overall entire CartOrder
@@ -287,7 +287,7 @@ class CartOrderItem(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.order_id
+        return str(self.oid)
 
 
 # This model allows users to ask questions about specific products and have those questions answered.

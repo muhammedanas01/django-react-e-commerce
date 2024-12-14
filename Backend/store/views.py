@@ -74,7 +74,6 @@ class CartApiView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         payload = request.data.copy()  # payload is data sent from frontend
-        print(payload)
 
         product_id = payload["product_id"]
         user_id = payload["user_id"]
@@ -257,7 +256,6 @@ class CreateOrderApiView(generics.CreateAPIView):
 
     def create(self, request):
         payload = request.data
-
         cart_id = payload["cart_id"]
         user_id = payload["user_id"]
         full_name = payload["full_name"]
@@ -270,10 +268,10 @@ class CreateOrderApiView(generics.CreateAPIView):
         postal_code = payload["postalcode"]
         country = payload["country"]
 
-        if user_id != 0:
-            user = User.objects.get(id=user_id)
-        else:
+        if user_id == "0":
             user = None
+        else:
+            user = User.objects.get(id=user_id)
 
         cart_items = Cart.objects.filter(cart_id=cart_id)
 
@@ -285,6 +283,7 @@ class CreateOrderApiView(generics.CreateAPIView):
         grand_total = Decimal(0.0)
 
         order = CartOrder.objects.create(
+            buyer=user,
             full_name=full_name,
             email=email,
             mobile=mobile,
@@ -331,5 +330,5 @@ class CreateOrderApiView(generics.CreateAPIView):
         order.total = grand_total
 
         order.save()
-        return Response({"message":"order created successfully", "order_oid":order.oid}, status=status.HTTP_201_CREATED)
-    
+        print(order.order_id)
+        return Response({"message": f"order created successfully {order.order_id}"}, status=status.HTTP_201_CREATED)

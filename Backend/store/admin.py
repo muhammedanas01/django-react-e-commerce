@@ -45,7 +45,7 @@ class CartOrderItemInline(admin.TabularInline):
     extra = 1 #number of additional empty forms displayed in the admin interface 
 
 class CartOrderAdmin(admin.ModelAdmin):
-    list_display = ['buyer', 'country','mobile','total']
+    list_display = ['buyer', 'country','mobile','total', 'order_id']
     list_filter = ['date']
     search_fields = ['country']
     inlines = [CartOrderItemInline]
