@@ -172,17 +172,48 @@ function Cart() {
     }
   };
 
-  const creatOrder = () => {
-    console.log(fullName)
-    console.log(email)
-    console.log(mobile)
-    console.log(address)
-    console.log(city)
-    console.log(state)
-    console.log(landmark)
-    console.log(postalCode)
-    console.log(country)
-  }
+  const creatOrder = async () => {
+    if (
+      !fullName ||
+      !email ||
+      !mobile ||
+      !address ||
+      !country ||
+      !city ||
+      !postalCode ||
+      !state ||
+      !landmark
+    ) {
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Fields",
+        text: "All fields are required to proceed checkout",
+      });
+    }
+
+    const formData = new FormData();
+    try{
+      console.log("userData", userData?.user_id || 0)
+      formData.append("cart_id", cartId)
+      formData.append("full_name", fullName)
+      formData.append("email", email)
+      formData.append("user_id", userData? userData.user_id : 0)  
+      formData.append("mobile", mobile)
+      formData.append("address", address)
+      formData.append("city", city)
+      formData.append("landmark", landmark)
+      formData.append("state", state)
+      formData.append("postalcode", postalCode)
+      formData.append("country", country)
+  
+      const response = await apiInstance.post('create-order/', formData)
+      console.log(response.data.message)
+
+    } catch (error) {
+      console.error("Order creation failed:", error);
+    }
+   
+  };
 
   return (
     <div>
@@ -478,7 +509,7 @@ function Cart() {
                           <span>AED {cartTotal.shipping?.toFixed(2)}</span>
                         </div>
                         <div className="d-flex justify-content-between">
-                          <span>Tax</span>
+                          <span>Vat</span>
                           <span>AED {cartTotal.tax?.toFixed(2)}</span>
                         </div>
                         <div className="d-flex justify-content-between">
@@ -490,7 +521,10 @@ function Cart() {
                           <span>Grand Total</span>
                           <span>AED {cartTotal.total?.toFixed(2)}</span>
                         </div>
-                        <button onClick={creatOrder} className="btn btn-primary btn-rounded w-100">
+                        <button
+                          onClick={creatOrder}
+                          className="btn btn-primary btn-rounded w-100"
+                        >
                           Proceed to Checkout
                         </button>
                         <div className="card p-3 mt-4">
