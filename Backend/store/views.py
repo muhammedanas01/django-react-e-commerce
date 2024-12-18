@@ -236,6 +236,7 @@ class CartItemDeleteApiView(generics.DestroyAPIView):
     lookup_field = "cart_id"
 
     def get_object(self):
+        # keyword arguments in the URL
         cart_id = self.kwargs["cart_id"]
         item_id = self.kwargs["item_id"]
         user_id = self.kwargs.get("user_id")
@@ -282,6 +283,11 @@ class CreateOrderApiView(generics.CreateAPIView):
         total_initial_total = Decimal(0.0)
         grand_total = Decimal(0.0)
 
+        """
+        CardOrder Represents an order made by a user, 
+        which can contain multiple items.
+
+        """
         order = CartOrder.objects.create(
             buyer=user,
             full_name=full_name,
@@ -294,7 +300,10 @@ class CreateOrderApiView(generics.CreateAPIView):
             state=state,
             country=country,
         )
-
+        """
+        here for all cart in cart_items it creates a new CartOrderItem.
+        CartOrderItem represents each indivijual item in a cart
+        """
         for c in cart_items:
             CartOrderItem.objects.create(
                 order=order,
@@ -312,6 +321,12 @@ class CreateOrderApiView(generics.CreateAPIView):
                 total=c.total,
                 initial_total=c.total,  # this is to know what was the original total before applying coupen
             )
+            """
+            Accumulates the value of each product's price, tax, service fee, etc.
+            during each loop iteration to easily calculate the grand total.
+            Only the grand total is stored in the CartOrder.
+
+            """
 
             total_shipping += Decimal(c.shipping_amount)
             total_tax += Decimal(c.tax)
@@ -332,3 +347,21 @@ class CreateOrderApiView(generics.CreateAPIView):
         order.save()
         print(order.order_id)
         return Response({"message": f"order created successfully {order.order_id}"}, status=status.HTTP_201_CREATED)
+
+
+
+class CheckOutView(generics.RetrieveAPIView):
+    serializer_class = CartOrderSerializers
+    lookup_field = "order_id"
+
+    def get_object(self):
+        order_id = self.kwargs["order_id"]
+        print(f"Looking for order with order_id: {order_id}")  # Debug log
+        order = CartOrder.objects.filter(order_id=order_id).first()
+        print(f"Fetched order: {order}")
+        print(order.sub_total, order.shipping_amount, order.service_fee, order.tax, order.total)  # Check fields
+        if order is not None:
+            serializer = CartOrderSerializers(instance=order)
+            print("Serialized data:", serializer.data)
+            return order
+        

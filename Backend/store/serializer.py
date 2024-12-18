@@ -102,9 +102,10 @@ class CartOrderSerializers(serializers.ModelSerializer):
     class Meta:
         model = CartOrder
         fields = "__all__"
+        
 
     def __init__(self, *args, **kwargs):
-        super(CartOrderSerializers, self).__init__() 
+        super(CartOrderSerializers, self).__init__(*args, **kwargs) 
 
         request = self.context.get("request")
         if request and request.method == "POST":

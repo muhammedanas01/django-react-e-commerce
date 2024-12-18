@@ -225,7 +225,7 @@ class Cart(models.Model):
 # When the user decides to checkout and places an order, the items from the cart are converted into an order.
 # Store's overall details of an entire order
 class CartOrder(models.Model):
-    vendor = models.ManyToManyField(Vendor, blank=True)  # indicating which vendors are involved in the order.
+    vendor = models.ManyToManyField(Vendor, blank=True,)  # indicating which vendors are involved in the order.
     buyer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     sub_total = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
     shipping_amount = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)

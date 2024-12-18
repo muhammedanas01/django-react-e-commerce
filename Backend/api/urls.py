@@ -41,6 +41,12 @@ urlpatterns = [
     path('cart-item-delete/<str:cart_id>/<str:item_id>/<str:user_id>/', store_views.CartItemDeleteApiView.as_view(),),
     # for deleting item in cart without user_id
     path('cart-item-delete/<str:cart_id>/<str:item_id>/', store_views.CartItemDeleteApiView.as_view(),),
+    # for create order
+    path('create-order/', store_views.CreateOrderApiView.as_view(),name="create-order"),
+    #
+    path('checkout/<str:order_id>/', store_views.CheckOutView.as_view(),name="checkout"),
+
+    
 
 
 
