@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import CartID from "../plugin/CartId";
 import UserData from "../plugin/UserData";
@@ -18,6 +18,8 @@ const Toast = Swal.mixin({
 });
 
 function Cart() {
+  const navigate = useNavigate()
+
   const [cart, setCart] = useState([]);
   const [cartTotal, setCartTotal] = useState([]);
   const [productQuantity, setProductQuantity] = useState({});
@@ -189,30 +191,29 @@ function Cart() {
         title: "Missing Fields",
         text: "All fields are required to proceed checkout",
       });
-    }
+    } else {
+      const formData = new FormData();
+      try {
+        console.log("userData", userData?.user_id || 0);
+        formData.append("cart_id", cartId);
+        formData.append("full_name", fullName);
+        formData.append("email", email);
+        formData.append("user_id", userData ? userData.user_id : 0);
+        formData.append("mobile", mobile);
+        formData.append("address", address);
+        formData.append("city", city);
+        formData.append("landmark", landmark);
+        formData.append("state", state);
+        formData.append("postalcode", postalCode);
+        formData.append("country", country);
 
-    const formData = new FormData();
-    try{
-      console.log("userData", userData?.user_id || 0)
-      formData.append("cart_id", cartId)
-      formData.append("full_name", fullName)
-      formData.append("email", email)
-      formData.append("user_id", userData? userData.user_id : 0)  
-      formData.append("mobile", mobile)
-      formData.append("address", address)
-      formData.append("city", city)
-      formData.append("landmark", landmark)
-      formData.append("state", state)
-      formData.append("postalcode", postalCode)
-      formData.append("country", country)
-  
-      const response = await apiInstance.post('create-order/', formData)
-      console.log(response.data.message)
-
-    } catch (error) {
-      console.error("Order creation failed:", error);
+        const response = await apiInstance.post("create-order/", formData);
+        navigate(`/checkout/${response.data.order_id}/`)
+       
+      } catch (error) {
+        console.error("Order creation failed:", error);
+      }
     }
-   
   };
 
   return (
