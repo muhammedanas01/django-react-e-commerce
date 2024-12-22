@@ -37,7 +37,9 @@ function Cart() {
   const userData = UserData();
   const cartId = CartID();
   const currentAddress = useCurrentAddress();
+  console.log(currentAddress)
 
+  // this is for to list cart items
   const fetchCartData = (cartId, userId) => {
     const url = userId
       ? `cart-list/${cartId}/${userId}/`
@@ -47,6 +49,7 @@ function Cart() {
     });
   };
 
+  // this is for cart summary
   const fetchCartTotal = (cartId, userId) => {
     const url = userId
       ? `cart-detail/${cartId}/${userId}/`
@@ -57,8 +60,7 @@ function Cart() {
   };
 
   if (cartId !== null || cartId !== undefined) {
-    if (userData !== undefined) {
-      //with user id
+    if (userData !== undefined) { //with user id
       useEffect(() => {
         fetchCartData(cartId, userData?.user_id);
         fetchCartTotal(cartId, userData?.user_id); //cart summary

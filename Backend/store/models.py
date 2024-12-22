@@ -259,6 +259,20 @@ class CartOrder(models.Model):
 
     def __str__(self):
         return str(self.order_id)
+    
+    def orderItem(self):
+        return CartOrderItem.objects.filter(order=self)
+
+class Coupon(models.Model):
+    user_by = models.ManyToManyField(User, blank=True)  # to associate multiple users with a single coupon and and each user can use multiple coupons.
+    vendor = models.ForeignKey(Vendor, models.CASCADE)
+    code = models.CharField(max_length=1000)
+    discount = models.IntegerField(default=1)
+    seen = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.code
 
 
 # represents each individual item that is part of the overall entire CartOrder
@@ -279,7 +293,7 @@ class CartOrderItem(models.Model):
     size = models.CharField(max_length=100, null=True, blank=True)
     color = models.CharField(max_length=100, null=True, blank=True)
 
-    # initial total amount is total bill amount to reduce coupen discount from it
+    coupon = models.ManyToManyField(Coupon, blank=True)
     initial_total = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
     saved = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
 
@@ -362,18 +376,6 @@ class Notification(models.Model):
             return self.order.order_id
         else:
             return f"Notification - {self.pk}"
-
-
-class Coupon(models.Model):
-    user_by = models.ManyToManyField(User, blank=True)  # to associate multiple users with a single coupon and and each user can use multiple coupons.
-    vendor = models.ForeignKey(Vendor, models.CASCADE)
-    code = models.CharField(max_length=1000)
-    discount = models.IntegerField(default=1)
-    seen = models.BooleanField(default=False)
-    date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.code
 
 
 class Tax(models.Model):

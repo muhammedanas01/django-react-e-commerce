@@ -2,13 +2,7 @@ from django.shortcuts import render
 
 from userauths.models import User
 from store.models import Product, Category
-from store.serializer import (
-    ProductSerializers,
-    CategorySerializers,
-    CartSerializers,
-    CartOrderItemSerializers,
-    CartOrderSerializers,
-)
+from store.serializer import ProductSerializers, CategorySerializers, CartSerializers, CartOrderItemSerializers, CartOrderSerializers, CouponSerializers
 from store.models import (
     Gallery,
     Specification,
@@ -31,10 +25,13 @@ from rest_framework.response import Response
 
 from decimal import Decimal
 
+
 # ListAPIView to handle HTTP GET requests
-
-
 class CategoryListApiView(generics.ListAPIView):
+    """
+    this view shows all the categories
+    """
+
     # The ListAPIView method calls get_queryset() to fetch the queryset. By default, it uses the queryset attribute and passes to serializer.
     queryset = Category.objects.all()
     # specify serializer this view must interact with to transform the queryset objects into Json
@@ -45,6 +42,10 @@ class CategoryListApiView(generics.ListAPIView):
 
 
 class ProductListApiView(generics.ListAPIView):
+    """
+    this view is to list all products
+    """
+
     # The ListAPIView method calls get_queryset() to fetch the queryset. By default, it uses the queryset attribute and passes to serializer.
     queryset = Product.objects.all()
     # specify serializer this view must interact with to transform the queryset objects into Json
@@ -55,6 +56,10 @@ class ProductListApiView(generics.ListAPIView):
 
 
 class ProductDetailApiView(generics.RetrieveAPIView):
+    """
+    this view is works when user clicked on a product for detailed view
+    """
+
     serializer_class = ProductSerializers
     permission_classes = [AllowAny]
 
@@ -64,10 +69,9 @@ class ProductDetailApiView(generics.RetrieveAPIView):
         return Product.objects.get(slug=slug)
 
 
-""" this view is to add product to cart"""
-
-
 class CartApiView(generics.ListCreateAPIView):
+    """this view is to add product to cart according to user chosen size,color and qty"""
+
     queryset = Cart.objects.all()
     serializer_class = CartSerializers
     permission_classes = [AllowAny]
@@ -97,8 +101,10 @@ class CartApiView(generics.ListCreateAPIView):
             tax_rate = tax.rate / 100
         else:
             tax_rate = 0
-
-        # checks if there is a cart with same id in Cart model coming from payload and also same product
+        """
+        checks if there is a cart with same cart_id in Cart model,
+        and also same product if it exist it updates 
+        """
         cart = Cart.objects.filter(cart_id=cart_id, product=product).first()
 
         if cart:
@@ -123,7 +129,9 @@ class CartApiView(generics.ListCreateAPIView):
             return Response({"message": "cart updated Successfully."}, status=status.HTTP_200_OK)
 
         else:
-            # if cart dosen't exist
+            """
+            if cart doest'nt exist creates new cart
+            """
             cart = Cart()  # creates a new cart
             cart.product = product
             cart.user = user
@@ -146,10 +154,9 @@ class CartApiView(generics.ListCreateAPIView):
             return Response({"message": "cart added Successfully."}, status=status.HTTP_201_CREATED)
 
 
-"""this view is to list all products in cart"""
-
-
 class CartListView(generics.ListAPIView):
+    """this view is to list all products in cart"""
+
     serializer_class = CartSerializers
     permission_classes = [AllowAny]
     queryset = Cart.objects.all()
@@ -168,6 +175,11 @@ class CartListView(generics.ListAPIView):
 
 
 class CartDetailView(generics.RetrieveAPIView):
+    """
+    this view is for cart summary, this doesn't need any user interaction
+    it works in useEffect when page is mounting.
+    """
+
     serializer_class = CartSerializers
     permission_classes = [AllowAny]
     lookup_field = "cart_id"
@@ -232,6 +244,10 @@ class CartDetailView(generics.RetrieveAPIView):
 
 
 class CartItemDeleteApiView(generics.DestroyAPIView):
+    """
+    this view is called when user clicked on remove button on cart item
+    """
+
     serializer_class = CartSerializers
     lookup_field = "cart_id"
 
@@ -251,6 +267,12 @@ class CartItemDeleteApiView(generics.DestroyAPIView):
 
 
 class CreateOrderApiView(generics.CreateAPIView):
+    """
+    This view is called when the user clicks on the 'Proceed to Checkout' button on the cart page.
+    It creates a CartOrder for the items in the cart and then navigates to the 
+    CheckOutApiView endpoint in the frontend
+    """
+
     serializer_class = CartOrderSerializers
     queryset = CartOrder.objects.all()
     permission_classes = [AllowAny]
@@ -274,8 +296,6 @@ class CreateOrderApiView(generics.CreateAPIView):
         else:
             user = User.objects.get(id=user_id)
 
-        cart_items = Cart.objects.filter(cart_id=cart_id)
-
         total_shipping = Decimal(0.00)
         total_tax = Decimal(0.0)
         total_service_fee = Decimal(0.0)
@@ -284,7 +304,7 @@ class CreateOrderApiView(generics.CreateAPIView):
         grand_total = Decimal(0.0)
 
         """
-        CardOrder Represents an order made by a user, 
+        CartOrder Represents an order made by a user, 
         which can contain multiple items.
 
         """
@@ -301,12 +321,14 @@ class CreateOrderApiView(generics.CreateAPIView):
             country=country,
         )
         """
-        here for all cart in cart_items it creates a new CartOrderItem.
+        here for all item in cart_items it creates a new CartOrderItem.
         CartOrderItem represents each indivijual item in a cart
         """
+        cart_items = Cart.objects.filter(cart_id=cart_id)# cart_id is from payload
+
         for c in cart_items:
             CartOrderItem.objects.create(
-                order=order,
+                order=order, # This represents the order in which this item is present.
                 product=c.product,
                 vendor=c.product.vendor,
                 item_quantity=c.item_quantity,
@@ -336,7 +358,10 @@ class CreateOrderApiView(generics.CreateAPIView):
             grand_total += Decimal(c.total)
 
             order.vendor.add(c.product.vendor)
-
+        """
+            after loop breaks, each acumilated value of item is assinged to CartOrder,
+            order ==== CartOrder
+        """
         order.sub_total = total_sub_total
         order.shipping_amount = total_shipping
         order.service_fee = total_service_fee
@@ -346,22 +371,90 @@ class CreateOrderApiView(generics.CreateAPIView):
 
         order.save()
         print(order.order_id)
-        return Response({"message": f"order created successfully {order.order_id}"}, status=status.HTTP_201_CREATED)
-
+        return Response({"message": "order created successfully", "order_id": order.order_id}, status=status.HTTP_201_CREATED)
 
 
 class CheckOutView(generics.RetrieveAPIView):
+    """
+     When the CartOrderApiView is called upon the user clicking the 'Proceed to Checkout' button, 
+     we will navigate to this view's endpoint within that function.  
+
+     here we show shipping address(we got it from cart page without shipping address user cant click
+     on 'Proceed To Checkout' button)and order summary
+    """
     serializer_class = CartOrderSerializers
     lookup_field = "order_id"
 
     def get_object(self):
         order_id = self.kwargs["order_id"]
-        print(f"Looking for order with order_id: {order_id}")  # Debug log
-        order = CartOrder.objects.filter(order_id=order_id).first()
-        print(f"Fetched order: {order}")
-        print(order.sub_total, order.shipping_amount, order.service_fee, order.tax, order.total)  # Check fields
+        order = CartOrder.objects.get(order_id=order_id)
         if order is not None:
-            serializer = CartOrderSerializers(instance=order)
-            print("Serialized data:", serializer.data)
             return order
-        
+
+
+class CouponApiView(generics.CreateAPIView):
+    """
+    how coupon is applied?
+    step 1: get order_id and coupen_code from payload
+    step 2: get the order from CartOrder(model) using order_id 
+    step 3: get coupon from Coupon(model).
+
+    N0TE: every CartOrderItem has a order field which allows us to know in which CartOrder this item is at
+    N0TE: every Coupon has a vendor, we need to filter items from CartOrderItem using order field and vendor.
+    N0TE: we will know who is the vendor when geting coupon from Coupon(model)  
+
+    step 4: filter order items with coupon using order and vendor
+    step 5: calculates the discount using coupon code and item total
+    step 6: reduce discount from item total(subtotal+shipping+tax) and item subtotal(price*qty(item))
+    step 7: add coupon and saved to CartOrderItem fields
+
+    step 8: reduce CartOrder total(grand total) and subtotal from discount
+    step 9: assing discount to saved filed in CartOrder
+    """
+    serializer_class = CouponSerializers
+    queryset = Coupon.objects.all()
+    permission_classes = [AllowAny,]
+
+    def create(self, request):
+        payload = request.data
+
+        order_id = payload["order_id"]
+        coupon_code = payload["coupon_code"]
+
+        order = CartOrder.objects.get(order_id=order_id)
+        coupon = Coupon.objects.filter(code=coupon_code).first()
+        """
+        first checks for if a coupen exist, if exist filter and get item by order and vendor
+        """
+        print("=======================",coupon)
+        if coupon:
+            # filtering items from a order where vendor has given coupon
+            order_items_with_coupon = CartOrderItem.objects.filter(order=order, vendor=coupon.vendor)
+            if  order_items_with_coupon:
+                for item in  order_items_with_coupon:
+                    if not coupon in item.coupon.all():# if coupon is not applied
+                        discount = item.total * coupon.discount / 100
+
+                        item.total -= discount
+                        item.sub_total -= discount
+                        item.coupon.add(coupon)
+                        item.saved += discount
+
+                        order.total -= discount
+                        #order.sub_total -= discount
+                        order.saved += discount
+
+                        item.save()
+                        order.save()
+
+                        return Response({"message":"Coupen Activated", "icon":"success"}, status=status.HTTP_202_ACCEPTED)
+                    else:
+                        return Response({"message":"Coupen already Activated", "icon":"success"}, status=status.HTTP_202_ACCEPTED)
+                else:
+                    return Response({"message":"Order Item Does Not Exist", "icon":"error"}, status=status.HTTP_202_ACCEPTED)
+            else:#if coupen dosent exist
+                return Response({"message":"this coupon cant be applied for any of your cart item", "icon":"error"}, status=status.HTTP_202_ACCEPTED)
+        else:#if coupen dosent exist
+                return Response({"message":"Coupen Does Not Exist", "icon":"error"}, status=status.HTTP_202_ACCEPTED)
+
+                    

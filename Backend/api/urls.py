@@ -45,6 +45,9 @@ urlpatterns = [
     path('create-order/', store_views.CreateOrderApiView.as_view(),name="create-order"),
     #
     path('checkout/<str:order_id>/', store_views.CheckOutView.as_view(),name="checkout"),
+    #
+    path('coupon/', store_views.CouponApiView.as_view(),name="coupon"),
+
 
     
 
