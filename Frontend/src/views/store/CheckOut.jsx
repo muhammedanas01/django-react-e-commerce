@@ -5,6 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 import apiInstance from "../../utils/axios";
+import { SERVER_URL } from "../../utils/constants";
 
 import Swal from "sweetalert2";
 
@@ -17,28 +18,28 @@ const initialOptions = {
 function CheckOut() {
   const [order, setOrder] = useState([]);
   const [couponCode, setCouponCode] = useState("");
+  const [paymentLoading, setPaymentLoading] = useState(false);
   const param = useParams();
 
   const fetchOrderData = () => {
     apiInstance.get(`checkout/${param.order_id}/`).then((response) => {
-        console.log(response.data);
-        setOrder(response.data);
-      });
-  }
-  
+      console.log(response.data);
+      setOrder(response.data);
+    });
+  };
+
   //When the user navigates to this component, the useEffect will run and call the API endpoint for checkout with order_id
   useEffect(() => {
-    fetchOrderData()
+    fetchOrderData();
   }, []);
 
   const applyCoupen = async () => {
     const formData = new FormData();
     formData.append("order_id", order.order_id);
     formData.append("coupon_code", couponCode);
-
     try {
       const response = await apiInstance.post("coupon/", formData);
-      fetchOrderData()
+      fetchOrderData();
       console.log(response.data.message);
       Swal.fire({
         icon: response.data.icon,
@@ -48,6 +49,12 @@ function CheckOut() {
       console.log("this is error", error);
     }
   };
+
+  const payWithStripe = (e) => {
+    setPaymentLoading(true);
+    e.target.form.submit();
+  };
+
   return (
     <div>
       <main>
@@ -283,18 +290,40 @@ function CheckOut() {
                       </button>
                     </div>
 
-                    <form
-                      action={`http://127.0.0.1:8000/stripe-checkout/ORDER_ID/`}
-                      method="POST"
-                    >
-                      <button
-                        type="submit"
-                        className="btn btn-primary btn-rounded w-100 mt-2"
-                        style={{ backgroundColor: "#635BFF" }}
+                    {paymentLoading === true && (
+                      <form
+                        action={`${SERVER_URL}/api/v1/stripe-checkout/${order.order_id}/`}
+                        method="POST"
                       >
-                        Pay Now (Stripe)
-                      </button>
-                    </form>
+                        <button
+                          type="submit"
+                          className="btn btn-primary btn-rounded w-100 mt-2"
+                          style={{ backgroundColor: "#635BFF" }}
+                          onClick={payWithStripe}
+                          disabled
+                        >
+                          processing..{" "}<i className="fas fa-spinner fa-spin"> </i>
+                        </button>
+                      </form>
+                    )}
+
+                    {paymentLoading === false && (
+                      <form
+                        action={`${SERVER_URL}/api/v1/stripe-checkout/${order.order_id}/`}
+                        method="POST"
+                      >
+                        <button
+                          type="submit"
+                          className="btn btn-primary btn-rounded w-100 mt-2"
+                          style={{ backgroundColor: "#635BFF" }}
+                          onClick={payWithStripe}
+
+                        >
+                          pay with stripe{" "}<i className="fas fa-credit-card"> </i>
+                         
+                        </button>
+                      </form>
+                    )}
 
                     <PayPalScriptProvider options={initialOptions}>
                       <PayPalButtons

@@ -513,7 +513,7 @@ function Cart() {
                         </div>
                         <div className="d-flex justify-content-between">
                           <span>Vat</span>
-                          <span>AED {cartTotal.tax?.toFixed(2)}</span>
+                          <span>AED {cartTotal.tax?.toFixed(2)}</span>                       
                         </div>
                         <div className="d-flex justify-content-between">
                           <span>Service Fee</span>
