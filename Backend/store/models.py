@@ -255,6 +255,7 @@ class CartOrder(models.Model):
     country = models.CharField(max_length=100, null=True, blank=True)
 
     order_id = ShortUUIDField(unique=True, length=10, alphabet="1234567890hjdsuwyeodnb")
+    stripe_session_id = models.CharField(max_length=1000, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
