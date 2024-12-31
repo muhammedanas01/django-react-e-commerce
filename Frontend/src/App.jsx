@@ -22,6 +22,7 @@ import Products from "./views/store/Products";
 import ProductDetails from "./views/store/ProductDetails";
 import Cart from "./views/store/Cart";
 import CheckOut from "./views/store/CheckOut";
+import PaymentSuccess from "./views/store/PaymentSuccess";
 
 function App() {
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
@@ -45,6 +46,8 @@ function App() {
         <Route path="/product-detail/:slug/" element={<ProductDetails />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout/:order_id/" element={<CheckOut />} />
+        <Route path="/payment-success/:order_id/" element={<PaymentSuccess />} />
+
 
       </Routes>
       <StoreFooter />

@@ -16,18 +16,18 @@ STATUS = (
 )
 # choices
 PAYMENT_STATUS = (
-    ("Paid", "Paid"),
-    ("Pending", "Pending"),
-    ("Processing", "Processing"),
-    ("Cancelled", "Cancelled"),
+    ("pending", "Pending"),
+    ("paid", "Paid"),
+    ("processing", "Processing"),
+    ("cancelled", "Cancelled"),
 )
 
 # choices
 ORDER_STATUS = (
-    ("Pending", "Pending"),
-    ("Processing", "Processing"),
-    ("Cancelled", "Cancelled"),
-    ("Successfull", "Successfull"),
+    ("pending", "Pending"),
+    ("processing", "Processing"),
+    ("cancelled", "Cancelled"),
+    ("successfull", "Successfull"),
 )
 
 # review choices
@@ -233,8 +233,8 @@ class CartOrder(models.Model):
     tax = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
     total = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)  # grand total
 
-    payment_status = models.CharField(choices=PAYMENT_STATUS, max_length=100, default="Pending")
-    order_status = models.CharField(choices=ORDER_STATUS, max_length=100, default="Pending")
+    payment_status = models.CharField(choices=PAYMENT_STATUS, max_length=100, default="pending")
+    order_status = models.CharField(choices=ORDER_STATUS, max_length=100, default="pending")
 
     # coupen # initial total amount is total bill amount to reduce coupen discount from it
     initial_total = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
@@ -261,7 +261,7 @@ class CartOrder(models.Model):
     def __str__(self):
         return str(self.order_id)
     
-    def orderItem(self):
+    def orderItem(self): # retrieves all CartOrderItem objects associated with a specific CartOrder
         return CartOrderItem.objects.filter(order=self)
 
 class Coupon(models.Model):
@@ -279,7 +279,7 @@ class Coupon(models.Model):
 # represents each individual item that is part of the overall entire CartOrder
 # Represents each product within the CartOrder, detailing the specifics of each item (such as quantity, price, vendor, etc.)
 class CartOrderItem(models.Model):
-    order = models.ForeignKey(CartOrder, on_delete=models.CASCADE)
+    order = models.ForeignKey(CartOrder, on_delete=models.CASCADE) #ensures that each CartOrderItem belongs to a specific order 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
 

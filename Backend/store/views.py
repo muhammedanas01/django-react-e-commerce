@@ -374,7 +374,7 @@ class CreateOrderApiView(generics.CreateAPIView):
         order.total = grand_total
 
         order.save()
-        print(order.order_id)
+        print("CartOrder instance is created order id ====== ",order.order_id)
         return Response({"message": "order created successfully", "order_id": order.order_id}, status=status.HTTP_201_CREATED)
 
 
@@ -430,43 +430,50 @@ class CouponApiView(generics.CreateAPIView):
         coupon_code = payload["coupon_code"]
 
         order = CartOrder.objects.get(order_id=order_id)
+        
+        #first checks for if a coupen exist, if exist filter and get item by order and vendor
         coupon = Coupon.objects.filter(code=coupon_code).first()
-        """
-        first checks for if a coupen exist, if exist filter and get item by order and vendor
-        """
-        print("=======================", coupon)
-        if coupon:
-            # filtering items from a order where vendor has given coupon
-            order_items_with_coupon = CartOrderItem.objects.filter(order=order, vendor=coupon.vendor)
-            if order_items_with_coupon:
-                for item in order_items_with_coupon:
-                    if not coupon in item.coupon.all():  # if coupon is not applied
-                        discount = item.total * coupon.discount / 100
+        if not coupon:
+            return Response({"message": "Coupon does not exist", "icon": "error"}, status=status.HTTP_404_NOT_FOUND)
 
-                        item.total -= discount
-                        item.sub_total -= discount
-                        item.coupon.add(coupon)
-                        item.saved += discount
+        # filtering items from a order where vendor has given coupon
+        order_items_with_coupon = CartOrderItem.objects.filter(order=order, vendor=coupon.vendor)
+        for item in order_items_with_coupon:
+            print("========",item.product.title)
 
-                        order.total -= discount
-                        # order.sub_total -= discount
-                        order.saved += discount
+        if not order_items_with_coupon.exists():
+            return Response({"message": "This coupon cannot be applied to any of your cart items", "icon": "error"}, status=status.HTTP_400_BAD_REQUEST)
 
-                        item.save()
-                        order.save()
+        coupon_applied = False
+            
+        for item in order_items_with_coupon:
+            if coupon not in item.coupon.all():  # Apply coupon only if not already applied
+                discount = item.total * coupon.discount / 100
+                item.total -= discount
+                item.sub_total -= discount
+                item.coupon.add(coupon)
+                item.saved += discount
 
-                        return Response({"message": "Coupen Activated", "icon": "success"}, status=status.HTTP_202_ACCEPTED)
-                    else:
-                        return Response({"message": "Coupen already Activated", "icon": "success"}, status=status.HTTP_202_ACCEPTED)
-                else:
-                    return Response({"message": "Order Item Does Not Exist", "icon": "error"}, status=status.HTTP_202_ACCEPTED)
-            else:  # if coupen dosent exist
-                return Response({"message": "this coupon cant be applied for any of your cart item", "icon": "error"}, status=status.HTTP_202_ACCEPTED)
-        else:  # if coupen dosent exist
-            return Response({"message": "Coupen Does Not Exist", "icon": "error"}, status=status.HTTP_202_ACCEPTED)
+                order.total -= discount
+                # order.sub_total -= discount
+                order.saved += discount
 
+                item.save()
+                order.save()
+                coupon_applied = True
+            
+        if coupon_applied:
+            order.save()
+            return Response({"message": "Coupon activated successfully", "icon": "success"}, status=status.HTTP_202_ACCEPTED)
+
+                    
 
 class StripeCheckoutView(generics.CreateAPIView):
+    """
+    this view is called when clicks on "pay with stripe button" in CheckOutView
+    when buton clicked the the order_id will be passed to url eg:path('stripe-checkout/<order_id>/
+    using that order_id info we will setUp stripe payment.
+    """
     serializer_class = CartOrderSerializers
     permission_classes = [
         AllowAny,
@@ -480,7 +487,7 @@ class StripeCheckoutView(generics.CreateAPIView):
         if not order:
             return Response({"message": "order does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
-        try:
+        try:    
             checkout_session = stripe.checkout.Session.create(
                 customer_email=order.email,
                 payment_method_types=["card"],
@@ -496,11 +503,13 @@ class StripeCheckoutView(generics.CreateAPIView):
                         'quantity': 1,
                     }
                 ],
-                mode='payment',
+                mode='payment', 
+            #here when payment is success we are telling stripe to redirect to this given url with order_id and session_id
+            #vise versa for cancel also
                 success_url= "http://localhost:5173/payment-success/" + order.order_id + "?session_id={CHECKOUT_SESSION_ID}",
                 cancel_url = "http://localhost:5173/payment-failed/?session_id={CHECKOUT_SESSION_ID}"
             )
-
+            #updating session_id in order
             order.stripe_session_id = checkout_session.id
             order.save()
 
@@ -508,4 +517,48 @@ class StripeCheckoutView(generics.CreateAPIView):
         except stripe.error.StripeError as e:
             return Response({"message":f"something went wrong in checkout session:{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
-            
+class PaymentSuccessView(generics.CreateAPIView):
+    """
+    this view works after the payment is  successfull.
+    after successfull payment it redirect's to payment-success component in frontend,
+    from there when component is mounting using useEffect and param we get order_id and session_id,
+    from url and call api instance to this view. 
+    """
+    
+    serializer_class = CartOrderSerializers
+    permission_classes = [AllowAny,]
+    queryset = CartOrder.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        payload = request.data
+        order_id = payload['order_id']
+        session_id = payload['session_id']
+        print("from formDaTA---====",order_id)
+      
+        order = CartOrder.objects.get(order_id=order_id)
+        order_items = CartOrderItem.objects.filter(order=order)
+        print("++++++++++++__________+++++++++++",order.order_id)
+        print("________________+++++++++++++++@@@@@@@@@",order_items)
+
+        if session_id != "null":
+            session =  stripe.checkout.Session.retrieve(session_id)
+
+            if session.payment_status == "paid":
+                if order.payment_status == "pending":
+                    order.payment_status = 'paid'
+                    order.save()
+                    print("order after save", order)
+                    return Response({"message":"Payment Successfull"})
+                else:
+                    return Response({"message":"Payment Already Received"})              
+            elif session.payment_status == "unpaid":
+                    return Response({"message":"Unpaid"})
+            else:
+                return Response({"message":"An Error Occured, Try Again"})
+        else:
+            session = None
+      
+
+
+
+

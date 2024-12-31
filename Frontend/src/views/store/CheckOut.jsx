@@ -46,7 +46,10 @@ function CheckOut() {
         title: response.data.message,
       });
     } catch (error) {
-      console.log("this is error", error);
+      Swal.fire({
+        icon: error.response?.data?.icon || 'error',
+        title: error.response?.data?.message || 'An error occurred',
+      });
     }
   };
 

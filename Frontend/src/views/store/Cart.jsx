@@ -125,7 +125,7 @@ function Cart() {
   const handleCartItemDelete = async (item_id) => {
     try {
       const url = userData
-        ? `cart-item-delete/${cartId}/${item_id}/${userData?.userId}/`
+        ? `cart-item-delete/${cartId}/${item_id}/${userData?.user_id}/`
         : `cart-item-delete/${cartId}/${item_id}/`;
 
       await apiInstance.delete(url);
