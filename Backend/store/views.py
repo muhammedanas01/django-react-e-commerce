@@ -27,9 +27,23 @@ from decimal import Decimal
 
 import stripe
 
+from django.core.mail import send_mail
+import threading
+
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
+
 stripe.api_key = settings.STRIPE_PRIVATE_KEY
 
-
+def send_notification(user=None, vendor=None, order=None, order_item=None):
+    Notification.objects.create(
+        user = user,
+        vendor = vendor,
+        order = order,
+        order_item = order_item
+    )
 # ListAPIView to handle HTTP GET requests
 class CategoryListApiView(generics.ListAPIView):
     """
@@ -533,13 +547,10 @@ class PaymentSuccessView(generics.CreateAPIView):
         payload = request.data
         order_id = payload['order_id']
         session_id = payload['session_id']
-        print("from formDaTA---====",order_id)
-      
+       
         order = CartOrder.objects.get(order_id=order_id)
         order_items = CartOrderItem.objects.filter(order=order)
-        print("++++++++++++__________+++++++++++",order.order_id)
-        print("________________+++++++++++++++@@@@@@@@@",order_items)
-
+       
         if session_id != "null":
             session =  stripe.checkout.Session.retrieve(session_id)
 
@@ -547,8 +558,11 @@ class PaymentSuccessView(generics.CreateAPIView):
                 if order.payment_status == "pending":
                     order.payment_status = 'paid'
                     order.save()
-                    print("order after save", order)
-                    return Response({"message":"Payment Successfull"})
+                    
+                    response = Response({"message": "Payment Successful"})
+                    threading.Thread(target=self.send_notifications_and_email, args=(order, order_items)).start()
+                    return response
+                            
                 else:
                     return Response({"message":"Payment Already Received"})              
             elif session.payment_status == "unpaid":
@@ -557,8 +571,72 @@ class PaymentSuccessView(generics.CreateAPIView):
                 return Response({"message":"An Error Occured, Try Again"})
         else:
             session = None
-      
 
+    def send_notifications_and_email(self, order, order_items):
+        self.notify_customer(order)  
+          
+        for item in order_items:
+            self._notify_vendor(order, item)
+    
+    def notify_customer(self, order):
+        if order.buyer:
+            send_notification(user=order.buyer, order=order) 
+            try:
+                html_content = render_to_string('email_templates/order_confirmation.html', {'order': order})
+                send_mail(
+                    "Order Confirmed",
+                    strip_tags(html_content),
+                    "mohdanas658@gmail.com",
+                    [order.buyer.email],
+                    html_message=html_content,
+                )
+            except Exception as e:
+                print(f"Failed to send email to customer: {e}")
 
+    def _notify_vendor(self, order, item):
+        send_notification(order=order, vendor=item.vendor, order_item=item)
+        try:
+            html_content = render_to_string('email_templates/vendor_notification.html', {'order': order, 'item': item})
+            send_mail(
+                f"Your product {item.product.title} has been purchased",
+                strip_tags(html_content),
+                "mohdanas658@gmail.com",
+                [item.vendor.user.email],
+                html_message=html_content,
+            )
+        except Exception as e:
+            print(f"Failed to send email to vendor {item.vendor.user.email}: {e}")
 
+    
+    # def send_notifications_and_email(self, order, order_items):
+    #         """
+    #         This method handles sending notifications and emails asynchronously after the response.
+    #         """
+    #         # Send notification to the customer
+    #         if order.buyer is not None:
+    #             send_notification(user=order.buyer, order=order)
+    #             try:
+    #                 send_mail(
+    #                     "Order Confirmed",
+    #                     "Your order has been confirmed.",
+    #                     "mohdanas658@gmail.com",
+    #                     [order.buyer.email],
+    #                 )
+    #                 print("Customer email sent successfully")
+    #             except Exception as e:
+    #                 print(f"Failed to send email to customer: {e}")
+
+    #         # Send notifications to vendors
+    #         for item in order_items:
+    #             send_notification(order=order, vendor=item.vendor, order_item=item)
+    #             try:
+    #                 send_mail(
+    #                     f"your producr {item.product.title} has been purchased",
+    #                     "Your order has been confirmed.",
+    #                     "mohdanas658@gmail.com",
+    #                     [item.vendor.user.email]
+    #                 )
+    #                 print("Customer email sent successfully")
+    #             except Exception as e:
+    #                 print(f"Failed to send email to vendor{item.vendor.user.email}: {e}")
 

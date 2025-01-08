@@ -47,6 +47,7 @@ function PaymentSuccess() {
         });
     }
   }, [order.order_id, sessionId]);
+  console.log(status)
 
   return (
     <>

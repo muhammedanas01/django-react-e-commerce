@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from environ import Env
+import os
 
 env = Env()
 env.read_env()
@@ -56,8 +57,10 @@ INSTALLED_APPS = [
 
     #allowing api request
     'corsheaders',
-    
 
+    #for email
+    
+    
 ]
 
 MIDDLEWARE = [
@@ -76,7 +79,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -158,6 +161,12 @@ from datetime import timedelta
 env.read_env(env_file=BASE_DIR / ".env")
 STRIPE_PUBLIC_KEY = env("STRIPE_PUBLIC_KEY")
 STRIPE_PRIVATE_KEY = env("STRIPE_PRIVATE_KEY")
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mohdanas658@gmail.com'
+EMAIL_HOST_PASSWORD = "port uktz mxzq ahfe"
+EMAIL_USE_TLS = True
 
 
 SIMPLE_JWT = {
