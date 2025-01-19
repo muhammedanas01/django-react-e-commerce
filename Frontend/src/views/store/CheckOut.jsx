@@ -5,7 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 import apiInstance from "../../utils/axios";
-import { SERVER_URL } from "../../utils/constants";
+import { SERVER_URL, PAYPAL_CLIENT_ID } from "../../utils/constants";
 
 import Swal from "sweetalert2";
 
@@ -47,8 +47,8 @@ function CheckOut() {
       });
     } catch (error) {
       Swal.fire({
-        icon: error.response?.data?.icon || 'error',
-        title: error.response?.data?.message || 'An error occurred',
+        icon: error.response?.data?.icon || "error",
+        title: error.response?.data?.message || "An error occurred",
       });
     }
   };
@@ -57,6 +57,13 @@ function CheckOut() {
     setPaymentLoading(true);
     e.target.form.submit();
   };
+
+  // const initialOptions = {
+  //   clientId: PAYPAL_CLIENT_ID,
+  //   currency:"AED",
+  //   intent:"capture",
+
+  // }
 
   return (
     <div>
@@ -305,7 +312,8 @@ function CheckOut() {
                           onClick={payWithStripe}
                           disabled
                         >
-                          processing..{" "}<i className="fas fa-spinner fa-spin"> </i>
+                          processing..{" "}
+                          <i className="fas fa-spinner fa-spin"> </i>
                         </button>
                       </form>
                     )}
@@ -320,13 +328,13 @@ function CheckOut() {
                           className="btn btn-primary btn-rounded w-100 mt-2"
                           style={{ backgroundColor: "#635BFF" }}
                           onClick={payWithStripe}
-
                         >
-                          pay with stripe{" "}<i className="fas fa-credit-card"> </i>
-                         
+                          pay with stripe{" "}
+                          <i className="fas fa-credit-card"> </i>
                         </button>
                       </form>
                     )}
+                    {console.log(order.total)}
 
                     <PayPalScriptProvider options={initialOptions}>
                       <PayPalButtons
@@ -337,7 +345,8 @@ function CheckOut() {
                               {
                                 amount: {
                                   currency_code: "USD",
-                                  value: 100,
+                                  value: 100045 // Ensures exactly two decimal places
+                                  // Add fallback for undefined total
                                 },
                               },
                             ],
@@ -347,12 +356,12 @@ function CheckOut() {
                           return actions.order.capture().then((details) => {
                             const name = details.payer.name.given_name;
                             const status = details.status;
-                            const payapl_order_id = data.orderID;
+                            const paypal_order_id = data.orderID;
 
                             console.log(status);
                             if (status === "COMPLETED") {
                               navigate(
-                                `/payment-success/${order.oid}/?payapl_order_id=${payapl_order_id}`
+                                `/payment-success/${order.oid}/?paypal_order_id=${paypal_order_id}`
                               );
                             }
                           });

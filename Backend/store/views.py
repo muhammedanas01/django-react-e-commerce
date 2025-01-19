@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
+import requests
 from userauths.models import User
 from store.models import Product, Category
-from store.serializer import ProductSerializers, CategorySerializers, CartSerializers, CartOrderItemSerializers, CartOrderSerializers, CouponSerializers
+from store.serializer import ProductSerializers, CategorySerializers, CartSerializers, CartOrderItemSerializers, CartOrderSerializers, CouponSerializers, ReviewSerializers
 from store.models import (
     Gallery,
     Specification,
@@ -531,6 +532,16 @@ class StripeCheckoutView(generics.CreateAPIView):
         except stripe.error.StripeError as e:
             return Response({"message":f"something went wrong in checkout session:{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
+def get_access_token(client_id, secret_id):
+    token_url = 'https://api.sandbox.paypal.com/v1/oauth/token/'
+    data = {'grand_type':'client_credentials'}
+    auth = {client_id, secret_id}
+
+    response = requests.post(token_url, data=data, auth=auth)
+    if response.status_code == 200:
+        print("Access Token:", response.json()['access_token'])
+    else:
+        raise Exception(f"failed to get access code{response.status_code}")
 class PaymentSuccessView(generics.CreateAPIView):
     """
     this view works after the payment is  successfull.
@@ -550,6 +561,8 @@ class PaymentSuccessView(generics.CreateAPIView):
        
         order = CartOrder.objects.get(order_id=order_id)
         order_items = CartOrderItem.objects.filter(order=order)
+
+        get_access_token()
        
         if session_id != "null":
             session =  stripe.checkout.Session.retrieve(session_id)
@@ -640,3 +653,36 @@ class PaymentSuccessView(generics.CreateAPIView):
     #             except Exception as e:
     #                 print(f"Failed to send email to vendor{item.vendor.user.email}: {e}")
 
+class ReviewListApiView(generics.ListCreateAPIView):
+    """
+    this view get the products which has review
+    """
+    serializer_class = ReviewSerializers
+    permission_classes = [AllowAny,]
+
+    def get_queryset(self):
+        product_id = self.kwargs['product_id']
+
+        product = Product.objects.get(id=product_id)
+        reviews = Review.objects.filter(product=product)
+        return reviews
+    
+    def create(self, request, *args, **kwargs):
+        payload = request.data
+
+        user_id = payload['user_id']
+        product_id = payload['product_id']
+        rating  = payload['rating']
+        review  = payload['review']
+
+        user = User.objects.get(id=user_id) 
+        product = Product.objects.get(id=product_id)
+
+        Review.objects.create(
+            user=user,
+            product=product,
+            rating=rating,
+            review=review
+        )
+
+        return Response({"message":"review created successfully"}, status=status.HTTP_200_OK)

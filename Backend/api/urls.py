@@ -49,8 +49,10 @@ urlpatterns = [
     path('coupon/', store_views.CouponApiView.as_view(),name="coupon"),
     #stripe
     path('stripe-checkout/<order_id>/',store_views.StripeCheckoutView.as_view(), name="stripe"),
-    # payment
-    path('payment-success/<order_id>/',store_views.PaymentSuccessView.as_view(), name="payment-success")
+    # payment success
+    path('payment-success/<order_id>/',store_views.PaymentSuccessView.as_view(), name="payment-success"),
+    # Review
+    path('product_reviews/<product_id>/',store_views.ReviewListApiView.as_view(), name="product-review")
 
 
     

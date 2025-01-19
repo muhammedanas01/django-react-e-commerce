@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import Swal from 'sweetalert2'
-
+import Swal from "sweetalert2";
 
 import apiInstance from "../../utils/axios";
 
@@ -11,12 +10,14 @@ import CartID from "../plugin/CartId";
 
 import "../Style/product-detail.css";
 
+import moment from "moment";
+
 const Toast = Swal.mixin({
-  toast:true,
-  position:"top",
-  timer:1500,
-  timerProgressBar: true
-})
+  toast: true,
+  position: "top",
+  timer: 1500,
+  timerProgressBar: true,
+});
 
 function ProductDetails() {
   const param = useParams(); // auto detects slug in url
@@ -29,6 +30,14 @@ function ProductDetails() {
     useState(" no color selected");
   const [userSelectedSize, setUserSelectedSize] = useState(" no size selected");
   const [userChosenQuantity, setUserChosenQuantity] = useState(1);
+  const [reviews, setReviews] = useState([]);
+  const [createReview, setCreateReview] = useState({
+    user_id: 0,
+    product_id: product.id,
+    review:"",
+    rating: 0
+  });
+
 
   const currentAddress = useCurrentAddress();
   const userData = UserData();
@@ -47,7 +56,7 @@ function ProductDetails() {
   }, [param.slug]);
 
   useEffect(() => {
-    console.log("from useEffect")
+    console.log("from useEffect");
     if (currentAddress) {
       console.log("from useEffect", currentAddress);
     }
@@ -95,13 +104,61 @@ function ProductDetails() {
       console.log(response.data);
 
       Toast.fire({
-        icon:"success",
-        title: response.data.message
-      })
+        icon: "success",
+        title: response.data.message,
+      });
     } catch (error) {
       console.log(error);
     }
   };
+
+  const fetchReviewData = () => {
+    if (product && product.id) {
+      // Ensure that product.id exists
+      apiInstance
+        .get(`product_reviews/${product.id}/`)
+        .then((response) => {
+          setReviews(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching reviews:", error);
+        });
+    } else {
+      console.log("Product or product.id is not available");
+    }
+  };
+
+  useEffect(() => {
+    fetchReviewData();
+    console.log(reviews)
+  }, [product]);
+
+  const handleReviewChange = (event) => {
+    setCreateReview({
+      ...createReview,
+      [event.target.name]: event.target.value
+    })
+  }
+
+  useEffect(() => {
+    console.log(createReview.review)
+    console.log(createReview.rating)
+
+  })
+
+  const handleReviewSubmit = (e) => {
+    e.preventDefault()
+    const formData = new FormData()
+    formData.append("user_id", userData?.user_id)
+    formData.append("product_id", product?.id)
+    formData.append("rating", createReview.rating)
+    formData.append("review", createReview.review)
+
+    apiInstance.post(`product_reviews/${product.id}/`, formData)
+    .then((response) => {
+      fetchReviewData();
+    })
+  }
 
   return (
     <main className="mb-4 mt-4">
@@ -236,7 +293,8 @@ function ProductDetails() {
                     </div>
 
                     {/* Size  this coloums renders only if there is*/}
-                    {size && size.length > 0 && ( // Check if the size array exists and is not empty
+                    {size &&
+                      size.length > 0 && ( // Check if the size array exists and is not empty
                         <div className="col-md-6 mb-4">
                           <div className="form-outline">
                             <label className="form-label" htmlFor="typeNumber">
@@ -446,34 +504,36 @@ function ProductDetails() {
             aria-labelledby="pills-contact-tab"
             tabIndex={0}
           >
-            <div className="container mt-5">
+            <div className="container mt-4">
               <div className="row">
                 {/* Column 1: Form to create a new review */}
                 <div className="col-md-6">
                   <h2>Create a New Review</h2>
-                  <form>
+                  <form onSubmit={handleReviewSubmit}>
                     <div className="mb-3">
                       <label htmlFor="username" className="form-label">
                         Rating
                       </label>
-                      <select name="" className="form-select" id="">
+                      <select name="rating" className="form-select" id="" onChange={handleReviewChange}>
                         <option value="1">1 Star</option>
-                        <option value="1">2 Star</option>
-                        <option value="1">3 Star</option>
-                        <option value="1">4 Star</option>
-                        <option value="1">5 Star</option>
+                        <option value="2">2 Star</option>
+                        <option value="3">3 Star</option>
+                        <option value="4">4 Star</option>
+                        <option value="5">5 Star</option>
                       </select>
                     </div>
                     <div className="mb-3">
-                      <label htmlFor="reviewText" className="form-label">
+                      <label htmlFor="reviewText"name=""review className="form-label">
                         Review
                       </label>
                       <textarea
                         className="form-control"
                         id="reviewText"
+                        name="review"
                         rows={4}
                         placeholder="Write your review"
-                        defaultValue={""}
+                        Value={createReview.review}
+                        onChange={handleReviewChange}
                       />
                     </div>
                     <button type="submit" className="btn btn-primary">
@@ -481,50 +541,67 @@ function ProductDetails() {
                     </button>
                   </form>
                 </div>
+
                 {/* Column 2: Display existing reviews */}
                 <div className="col-md-6">
                   <h2>Existing Reviews</h2>
                   <div className="card mb-3">
-                    <div className="row g-0">
-                      <div className="col-md-3">
-                        <img
-                          src="https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250"
-                          alt="User Image"
-                          className="img-fluid"
-                        />
-                      </div>
-                      <div className="col-md-9">
-                        <div className="card-body">
-                          <h5 className="card-title">User 1</h5>
-                          <p className="card-text">August 10, 2023</p>
-                          <p className="card-text">
-                            This is a great product! I'm really satisfied with
-                            it.
-                          </p>
+                    {reviews?.map((review, index) => (
+                      <div className="row g-0" key={index}>
+                        <div className="col-md-3">
+                          <img
+                            src="https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250"
+                            alt="User Image"
+                            className="img-fluid"
+                          />
+                        </div>
+                        <div className="col-md-9">
+                          <div className="card-body">
+                            <h5 className="card-title">
+                              {review.user?.full_name || "Anonymous User"}
+                            </h5>
+                            <p className="card-text">
+                              {moment(review.date).format("MMM DD, YYYY")}
+                            </p>
+                            <p className="card-text">{review.review}</p>
+
+                            {review.rating === 1 && (
+                              <i className="fas fa-star text-warning"></i>
+                            )}
+                            {review.rating === 2 && (
+                              <>
+                                <i className="fas fa-star text-warning"></i>
+                                <i className="fas fa-star text-warning"></i>
+                              </>
+                            )}
+                            {review.rating === 3 && (
+                              <>
+                                <i className="fas fa-star text-warning"></i>
+                                <i className="fas fa-star text-warning"></i>
+                                <i className="fas fa-star text-warning"></i>
+                              </>
+                            )}
+                            {review.rating === 4 && (
+                              <>
+                                <i className="fas fa-star text-warning"></i>
+                                <i className="fas fa-star text-warning"></i>
+                                <i className="fas fa-star text-warning"></i>
+                                <i className="fas fa-star text-warning"></i>
+                              </>
+                            )}
+                            {review.rating === 5 && (
+                              <>
+                                <i className="fas fa-star text-warning"></i>
+                                <i className="fas fa-star text-warning"></i>
+                                <i className="fas fa-star text-warning"></i>
+                                <i className="fas fa-star text-warning"></i>
+                                <i className="fas fa-star text-warning"></i>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="card mb-3">
-                    <div className="row g-0">
-                      <div className="col-md-3">
-                        <img
-                          src="https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250"
-                          alt="User Image"
-                          className="img-fluid"
-                        />
-                      </div>
-                      <div className="col-md-9">
-                        <div className="card-body">
-                          <h5 className="card-title">User 2</h5>
-                          <p className="card-text">August 15, 2023</p>
-                          <p className="card-text">
-                            The quality of this product exceeded my
-                            expectations!
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                   {/* More reviews can be added here */}
                 </div>
