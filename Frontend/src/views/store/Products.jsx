@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import apiInstance from "../../utils/axios";
 import { Link } from "react-router-dom";
 import Swal from 'sweetalert2'
@@ -6,6 +6,8 @@ import Swal from 'sweetalert2'
 import useCurrentAddress from "../plugin/UserCountry";
 import UserData from "../plugin/UserData";
 import CartID from "../plugin/CartId";
+
+import { CartContext } from "../plugin/Context";
 
 import "../Style/product-card-btn.css";
 
@@ -28,6 +30,8 @@ function Products() {
   const currentAddress = useCurrentAddress();
   const userData = UserData();
   const cartId = CartID();
+
+  const [cartCount, setCartCount] = useContext(CartContext)
 
   // when adding to cart from list of products there no input given for quantity so it is assigned into defaultQuantity
   const default_quantity = 1;
@@ -79,7 +83,17 @@ function Products() {
       formData.append("color", selectedColor[product_id]);
       formData.append("item_quantity", default_quantity);
 
+      //add to cart
       const response = await apiInstance.post(`cart-view/`, formData);
+
+      //fetch updated cart details
+      const url = userData
+      ? `cart-list/${cartId}/${userData?.user_id}/`
+      : `cart-list/${cartId}/`;
+      apiInstance.get(url).then((res) => {
+        setCartCount(res.data.length)
+      })
+
       Toast.fire({
         icon:"success",
         title: response.data.message

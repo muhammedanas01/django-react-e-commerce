@@ -1,18 +1,34 @@
 import React from "react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/auth";
+import { CartContext } from "../plugin/Context";
 
 import Cart from "../store/Cart";
 
 import "../Style/StoreHeader.css"; 
 
+
 function StoreHeader() {
+  const navigate = useNavigate()
   const [isLoggedIn, user] = useAuthStore((state) => [
     state.setLoggedIn,
     state.extractUserDetails,
   ]);
-  
+
+  const cartCount = useContext(CartContext)
+  console.log(cartCount)
+  const [search, setSearch] = useState("");
+
+  const handleSearchChange = (event) => {
+    setSearch(event.target.value)
+    console.log(search)
+  }
+
+  const handleSearchSubmit = () => {
+    navigate(`/search?query=${search}`)
+  }
+
   return (
     <div>
       <nav className="navbar navbar-expand-lg navbar-dark sticky-navbar">
@@ -137,7 +153,7 @@ function StoreHeader() {
             </ul>
             <div className="d-flex">
               <input
-                onChange={null}
+                onChange={handleSearchChange}
                 name="search"
                 className="form-control me-2"
                 type="text"
@@ -145,7 +161,7 @@ function StoreHeader() {
                 aria-label="Search"
               />
               <button
-                onClick={null}
+                onClick={handleSearchSubmit}
                 className="btn btn-outline-success me-2"
                 type="submit"
               >
@@ -173,7 +189,7 @@ function StoreHeader() {
             )}
 
             <Link className="btn btn-danger" to="/cart">
-              <i className="fas fa-shopping-cart"></i> Cart
+              <i className="fas fa-shopping-cart">{" "}{cartCount}</i>
             </Link>
           </div>
         </div>

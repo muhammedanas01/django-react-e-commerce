@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useContext } from "react";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import CartID from "../plugin/CartId";
 import UserData from "../plugin/UserData";
 import useCurrentAddress from "../plugin/UserCountry";
+
+import { CartContext } from "../plugin/Context";
 
 import apiInstance from "../../utils/axios";
 
@@ -34,10 +36,12 @@ function Cart() {
   const [postalCode, setPostalCode] = useState("");
   const [country, setCountry] = useState("");
 
+  const [cartCount, setCartCount] = useContext(CartContext)
+
   const userData = UserData();
   const cartId = CartID();
   const currentAddress = useCurrentAddress();
-  console.log(currentAddress)
+  
 
   // this is for to list cart items
   const fetchCartData = (cartId, userId) => {
@@ -129,6 +133,14 @@ function Cart() {
         : `cart-item-delete/${cartId}/${item_id}/`;
 
       await apiInstance.delete(url);
+       //fetch updated cart details
+       const urll = userData
+       ? `cart-list/${cartId}/${userData?.user_id}/`
+       : `cart-list/${cartId}/`;
+       apiInstance.get(urll).then((res) => {
+         setCartCount(res.data.length)
+       })
+       
       Toast.fire({
         icon: "success",
         title: "item removed from cart",

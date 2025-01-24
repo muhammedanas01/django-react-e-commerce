@@ -686,3 +686,13 @@ class ReviewListApiView(generics.ListCreateAPIView):
         )
 
         return Response({"message":"review created successfully"}, status=status.HTTP_200_OK)
+    
+class SearchProductApiView(generics.ListCreateAPIView):
+    serializer_class = ProductSerializers
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+       query = self.request.GET.get("query")
+       print("Query45454545455735453dghth3465654656------------:", query)
+       products = Product.objects.filter(status="published", title__icontains=query)#title__icontains is a field lookup used to perform a case-insensitive search 
+       return products

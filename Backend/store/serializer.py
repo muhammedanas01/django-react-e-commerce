@@ -167,7 +167,7 @@ class ReviewSerializers(serializers.ModelSerializer):
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        super(ReviewSerializers, self).__init__() 
+        super(ReviewSerializers, self).__init__(*args, **kwargs) 
 
         request = self.context.get("request")
         if request and request.method == "POST":

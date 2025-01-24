@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 
@@ -7,6 +7,8 @@ import apiInstance from "../../utils/axios";
 import useCurrentAddress from "../plugin/UserCountry";
 import UserData from "../plugin/UserData";
 import CartID from "../plugin/CartId";
+
+import { CartContext } from "../plugin/Context";
 
 import "../Style/product-detail.css";
 
@@ -42,6 +44,8 @@ function ProductDetails() {
   const currentAddress = useCurrentAddress();
   const userData = UserData();
   const cartId = CartID();
+
+  const [cartCount, setCartCount] = useContext(CartContext)
 
   useEffect(() => {
     apiInstance.get(`product-detail/${param.slug}/`).then((response) => {
@@ -100,8 +104,17 @@ function ProductDetails() {
       formData.append("size", userSelectedSize);
       formData.append("color", userSelectedColor);
 
+      // add to cart
       const response = await apiInstance.post(`cart-view/`, formData);
       console.log(response.data);
+
+      //fetch updated cart details
+      const url = userData
+      ? `cart-list/${cartId}/${userData?.user_id}/`
+      : `cart-list/${cartId}/`;
+      apiInstance.get(url).then((res) => {
+        setCartCount(res.data.length)
+      })
 
       Toast.fire({
         icon: "success",

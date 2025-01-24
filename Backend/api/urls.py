@@ -52,7 +52,9 @@ urlpatterns = [
     # payment success
     path('payment-success/<order_id>/',store_views.PaymentSuccessView.as_view(), name="payment-success"),
     # Review
-    path('product_reviews/<product_id>/',store_views.ReviewListApiView.as_view(), name="product-review")
+    path('product_reviews/<product_id>/',store_views.ReviewListApiView.as_view(), name="product-review"),
+    # search
+    path('search-product/',store_views.SearchProductApiView.as_view(), name="search-product"),
 
 
     
