@@ -1,6 +1,7 @@
 from django.urls import path
 from userauths import views as userauths_views 
 from store import views as store_views
+from customer import views as customer_views
 
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -8,19 +9,22 @@ from rest_framework_simplejwt.views import TokenRefreshView
 app_name = 'api'
 
 urlpatterns = [
-    #userauth endpoints
+#userauth endpoints
     #for login
-     path('user/token',userauths_views.MyTokenObtainPairView.as_view(), name='login'),
-     #for signup or register
-     path('user/register', userauths_views.RegisterView.as_view(), name='register'),
-     #for token refreshing
-     path('user/token/refresh/',TokenRefreshView.as_view(), name='refresh_token'),
-     #for password reset request
-     path('user/password-reset/<email>/', userauths_views.PasswordResetEmailVerify.as_view(), name="password-reset"),
-     #change user password and save
-     path('user/password-change/', userauths_views.PasswordChangeView.as_view(), name="password-change-view"),   
+    path('user/token',userauths_views.MyTokenObtainPairView.as_view(), name='login'),
+    #for signup or register
+    path('user/register', userauths_views.RegisterView.as_view(), name='register'),
+    #for token refreshing
+    path('user/token/refresh/',TokenRefreshView.as_view(), name='refresh_token'),
+    #for password reset request
+    path('user/password-reset/<email>/', userauths_views.PasswordResetEmailVerify.as_view(), name="password-reset"),
+    #change user password and save
+    path('user/password-change/', userauths_views.PasswordChangeView.as_view(), name="password-change-view"), 
+    #profile View 
+    path('user/profile/<user_id>/',customer_views.ProfileApiView.as_view(), name="Profile-View"),
+ 
 
-    #store endpoints
+#store endpoints
     #for category list
     path('category/', store_views.CategoryListApiView.as_view(), name='category'),
     #for product list
@@ -56,6 +60,12 @@ urlpatterns = [
     # search
     path('search-product/',store_views.SearchProductApiView.as_view(), name="search-product"),
 
+
+#customer dashboard
+    path('customer/orders/<user_id>/',customer_views.OrdersApiView.as_view(), name="Orders"),
+    path('customer/order/<user_id>/<order_id>/',customer_views.OrdersApiView.as_view(), name="Orders"),
+
+   
 
     
 

@@ -1,22 +1,29 @@
 import { useEffect, useState } from "react";
-import {setUser} from '../utils/auth'
+import { setUser } from "../utils/auth";
+import React from "react";
+import { useNavigate} from "react-router-dom";
 
-import React from 'react'
-// mainWrapper prevent accessing the componets until setAuthUser task are completed or in other words, the state hasnt finished loading
-const  mainWrapper = ({childern}) => {
-    const [loading,setLoading] = useState(true)
+/**
+ * MainWrapper prevents access to components until the `setUser` task is completed,
+ * or in other words, until the authentication state finishes loading.
+ * MainWrapper itself does not enforce authentication—it only delays.. 
+ * ..rendering until loading is false.
+ */
+const MainWrapper = ({ children }) => {
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+    useEffect(() => {
+        const initializeAuth = async () => {
+            setLoading(true); // Set loading to true while initializing
+            const isUserSet = await setUser(); // Check if the user was set or  Perform the user authentication task
+            setLoading(false); // Set loading to false after completing
+        };
 
-    useEffect(async () => {
-        const handler = async () => {
-            setLoading(true)
-            await setUser()
-            setLoading(false) 
-        }       
-        handler()
-    },[]) //empty array as the second argument to useEffect, it means the effect will run only once when the component is mounted.
-    
-    return <>{loading ? null : childern}</>//it returns null if loading else it returns children.
-    //Why Return null Instead of true? because React expects components to return JSX so true would cause error.
-}
+        initializeAuth(); // Call the function
+    }, []); // Run this effect only once when the component mounts
 
-export default mainWrapper
+    // Render children only after loading is complete
+    return <>{loading ? null : children}</>;
+};
+
+export default MainWrapper;

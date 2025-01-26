@@ -562,7 +562,7 @@ class PaymentSuccessView(generics.CreateAPIView):
         order = CartOrder.objects.get(order_id=order_id)
         order_items = CartOrderItem.objects.filter(order=order)
 
-        get_access_token()
+        #get_access_token(12, 12)
        
         if session_id != "null":
             session =  stripe.checkout.Session.retrieve(session_id)

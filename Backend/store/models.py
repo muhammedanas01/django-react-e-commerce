@@ -20,6 +20,7 @@ PAYMENT_STATUS = (
     ("paid", "Paid"),
     ("processing", "Processing"),
     ("cancelled", "Cancelled"),
+    ("Deliverd", "deliverd"),
 )
 
 # choices

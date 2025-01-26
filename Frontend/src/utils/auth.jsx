@@ -94,7 +94,7 @@ export const logout = () => {
 export const setUser = async () => {
   const accessToken = Cookies.get("access_token");
   const refreshToken = Cookies.get("refresh_token");
-  //if not        or
+  //if not         or
   if (!accessToken || refreshToken) {
     return; //returns null
   }

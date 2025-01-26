@@ -17,7 +17,6 @@ function StoreHeader() {
   ]);
 
   const cartCount = useContext(CartContext)
-  console.log(cartCount)
   const [search, setSearch] = useState("");
 
   const handleSearchChange = (event) => {

@@ -15,12 +15,10 @@ function Login() {
 
   const isLoggedIn = useAuthStore((state) => state.setLoggedIn);
 
-  console.log(email);
-  console.log(password);
-
+  // this useeffect is for when user is already logged in and still try to access login
+  // ...page
   useEffect(() => {
-    console.log("Checking login status...");
-    console.log("isLoggedInnnnnn:", isLoggedIn());
+    console.log(isLoggedIn())
     if (isLoggedIn()) {
       navigate("/");
     } else {
@@ -28,6 +26,7 @@ function Login() {
     }
   }, [isLoggedIn]);
 
+  
   //when ever we call this usestate function it makes username and password as empty.
   const resetForm = () => {
     setEmail("");
