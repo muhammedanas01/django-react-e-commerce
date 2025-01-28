@@ -570,7 +570,13 @@ class PaymentSuccessView(generics.CreateAPIView):
             if session.payment_status == "paid":
                 if order.payment_status == "pending":
                     order.payment_status = 'paid'
+                print(f"Current order status+++++++++%%%%%%: {order.order_status}")
+                if order.order_status == "pending":    
+                    order.order_status = "order confirmed"
+
                     order.save()
+                    print(f"after order status+++++++++%%%%%%: {order.order_status}")
+
                     
                     response = Response({"message": "Payment Successful"})
                     threading.Thread(target=self.send_notifications_and_email, args=(order, order_items)).start()

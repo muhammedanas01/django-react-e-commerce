@@ -8,3 +8,4 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = "__all__"
         depth = 1
+

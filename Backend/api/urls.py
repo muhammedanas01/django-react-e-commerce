@@ -63,7 +63,12 @@ urlpatterns = [
 
 #customer dashboard
     path('customer/orders/<user_id>/',customer_views.OrdersApiView.as_view(), name="Orders"),
-    path('customer/order/<user_id>/<order_id>/',customer_views.OrdersApiView.as_view(), name="Orders"),
+    path('customer/order/<user_id>/<order_id>/',customer_views.OrdersApiView.as_view(), name="Order-details"),
+    path('customer/wishlist/<user_id>/',customer_views.WishListApiView.as_view(), name="wishlist"),
+    path('customer/notification/<user_id>/',customer_views.Customer_Notification.as_view(), name="customer notification"),
+    path('customer/notification/<user_id>/<notification_id>/',customer_views.Mark_Notification_As_Seen.as_view(), name="mark notification as seen"),
+
+
 
    
 

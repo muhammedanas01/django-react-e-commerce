@@ -40,6 +40,8 @@ import apiInstance from "./utils/axios";
 
 import MainWrapper from "./layout/mainWrapper";
 import OrderDetail from "./views/customer/OrderDetail";
+import WishList from "./views/customer/WishList";
+import CustomerNotification from "./views/customer/CustomerNotification";
 
 function App() {
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
@@ -89,6 +91,8 @@ function App() {
           <Route path="customer/account" element={<PrivateRouter> <Account /> </PrivateRouter>} />
           <Route path="customer/orders" element={<PrivateRouter> <Orders /> </PrivateRouter>} />
           <Route path="customer/order/:order_id" element={<PrivateRouter> <OrderDetail /> </PrivateRouter>} />
+          <Route path="customer/wishlist/" element={<PrivateRouter> <WishList /> </PrivateRouter>} />
+          <Route path="customer/notifications/" element={<PrivateRouter> <CustomerNotification /> </PrivateRouter>} />
 
 
         </Routes>

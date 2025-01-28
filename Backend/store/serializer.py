@@ -192,7 +192,7 @@ class WishlistSerializers(serializers.ModelSerializer):
             self.Meta.depth = 3
 
 class NotificationSerializers(serializers.ModelSerializer):
-   
+    
     class Meta:
         model = Notification
         fields = "__all__"
