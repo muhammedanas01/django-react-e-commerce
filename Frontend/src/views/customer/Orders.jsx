@@ -182,6 +182,12 @@ function Orders() {
                                     >
                                       View <i className="fas fa-eye"></i>
                                     </Link>
+                                    <Link
+                                      to={`/customer/invoice/${order.order_id}`}
+                                      className="btn btn-link btn-sm btn-rounded"
+                                    >
+                                      Invoice <i className="fas fa-receipt"></i>
+                                    </Link>
                                   </td>
                                 </tr>
                               ))}

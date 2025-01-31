@@ -67,7 +67,9 @@ urlpatterns = [
     path('customer/wishlist/<user_id>/',customer_views.WishListApiView.as_view(), name="wishlist"),
     path('customer/notification/<user_id>/',customer_views.Customer_Notification.as_view(), name="customer notification"),
     path('customer/notification/<user_id>/<notification_id>/',customer_views.Mark_Notification_As_Seen.as_view(), name="mark notification as seen"),
+    #customer settings
     path('users/profile/<int:user_id>/',customer_views.ProfileView.as_view(), name="profile view"),
+
 
 
 
