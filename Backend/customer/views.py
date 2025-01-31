@@ -139,6 +139,24 @@ class Mark_Notification_As_Seen(generics.ListAPIView):
             notification.save()
 
         return [notification]  # Wrap the notification in a list
+    
+from rest_framework.response import Response
+from rest_framework.decorators import action
+
+class ProfileView(generics.RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = [AllowAny]
+
+    def get_object(self):
+        user_id = self.kwargs['user_id']
+        user = User.objects.get(id=user_id)
+        profile_obj = Profile.objects.get(user=user)
+        return profile_obj
+
+
+
+
+
 
 
 

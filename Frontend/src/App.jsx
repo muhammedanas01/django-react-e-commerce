@@ -42,6 +42,7 @@ import MainWrapper from "./layout/mainWrapper";
 import OrderDetail from "./views/customer/OrderDetail";
 import WishList from "./views/customer/WishList";
 import CustomerNotification from "./views/customer/CustomerNotification";
+import CustomerSettings from "./views/customer/CustomerSettings";
 
 function App() {
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
@@ -93,6 +94,7 @@ function App() {
           <Route path="customer/order/:order_id" element={<PrivateRouter> <OrderDetail /> </PrivateRouter>} />
           <Route path="customer/wishlist/" element={<PrivateRouter> <WishList /> </PrivateRouter>} />
           <Route path="customer/notifications/" element={<PrivateRouter> <CustomerNotification /> </PrivateRouter>} />
+          <Route path="customer/settings/" element={<PrivateRouter> <CustomerSettings/> </PrivateRouter>} />
 
 
         </Routes>
