@@ -75,7 +75,8 @@ function Products() {
     try {
       formData.append("user_id", userData?.user_id);
       formData.append("cart_id", cartId);
-      formData.append("country", currentAddress.countryName);
+      //formData.append("country", currentAddress.countryName);
+      formData.append("country", "India");
       formData.append("product_id", product_id);
       formData.append("price", price);
       formData.append("shipping_amount", shipping_amount);
@@ -85,6 +86,7 @@ function Products() {
 
       //add to cart
       const response = await apiInstance.post(`cart-view/`, formData);
+      console.log(response.data)
 
       //fetch updated cart details
       const url = userData

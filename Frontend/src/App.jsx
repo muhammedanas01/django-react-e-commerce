@@ -39,10 +39,27 @@ import useCurrentAddress from "./views/plugin/UserCountry";
 import apiInstance from "./utils/axios";
 
 import MainWrapper from "./layout/mainWrapper";
+
 import OrderDetail from "./views/customer/OrderDetail";
 import WishList from "./views/customer/WishList";
 import CustomerNotification from "./views/customer/CustomerNotification";
 import CustomerSettings from "./views/customer/CustomerSettings";
+import CustomerInvoice from "./views/customer/CustomerInvoice";
+
+import DashboardVentor from "./views/vendor/DashboardVentor";
+import VendorProducts from "./views/vendor/VendorProducts";
+import VendorOrders from "./views/vendor/VendorOrders";
+import VendorOrderDetails from "./views/vendor/VendorOrderDetails";
+import Earning from "./views/vendor/Earning";
+import VendorReviews from "./views/vendor/VendorReviews";
+import Coupon from "./views/vendor/Coupon";
+import EditCoupon from "./views/vendor/EditCoupon";
+import VendorNotification from "./views/vendor/VendorNotification";
+import VendorSettings from "./views/vendor/VendorSettings";
+import VendorShop from "./views/vendor/VendorShop";
+import AddProduct from "./views/vendor/AddProduct";
+import UpdateProduct from "./views/vendor/UpdateProduct";
+
 
 function App() {
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
@@ -95,6 +112,22 @@ function App() {
           <Route path="customer/wishlist/" element={<PrivateRouter> <WishList /> </PrivateRouter>} />
           <Route path="customer/notifications/" element={<PrivateRouter> <CustomerNotification /> </PrivateRouter>} />
           <Route path="customer/settings/" element={<PrivateRouter> <CustomerSettings/> </PrivateRouter>} />
+          <Route path="customer/invoice/:order_id" element={<PrivateRouter> <CustomerInvoice/> </PrivateRouter>} />
+
+          {/* vendor */}
+          <Route path="vendor/dashboard" element={<PrivateRouter> <DashboardVentor/> </PrivateRouter>} />
+          <Route path="vendor/products" element={<PrivateRouter> <VendorProducts/> </PrivateRouter>} />
+          <Route path="vendor/orders" element={<PrivateRouter> <VendorOrders/> </PrivateRouter>} />
+          <Route path="/vendor/order-detail/:order_id" element={<PrivateRouter> <VendorOrderDetails/> </PrivateRouter>} />
+          <Route path="/vendor/earning/" element={<PrivateRouter> <Earning/> </PrivateRouter>} />
+          <Route path="vendor/review/" element={<PrivateRouter> <VendorReviews/> </PrivateRouter>} />
+          <Route path="vendor/coupon/" element={<PrivateRouter> <Coupon/> </PrivateRouter>} />
+          <Route path="/vendor/coupon-edit/:coupon_id" element={<PrivateRouter> <EditCoupon/> </PrivateRouter>} />
+          <Route path="/vendor/notifications" element={<PrivateRouter> <VendorNotification/> </PrivateRouter>} />
+          <Route path="/vendor/settings" element={<PrivateRouter> <VendorSettings/> </PrivateRouter>} />
+          <Route path="/vendor/:slug" element={<PrivateRouter> <VendorShop/> </PrivateRouter>} />
+          <Route path="/vendor/add-new-product" element={<PrivateRouter> <AddProduct/> </PrivateRouter>} />
+          <Route path="/vendor/product/update/:p_id" element={<PrivateRouter> <UpdateProduct/> </PrivateRouter>} />
 
 
         </Routes>

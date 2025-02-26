@@ -220,8 +220,10 @@ function Cart() {
         formData.append("state", state);
         formData.append("postalcode", postalCode);
         formData.append("country", country);
+        console.log(country)
 
         const response = await apiInstance.post("create-order/", formData);
+        console.log(response.data)
         navigate(`/checkout/${response.data.order_id}/`)
        
       } catch (error) {

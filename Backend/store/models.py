@@ -90,7 +90,7 @@ class Product(models.Model):
         prefix="PROD",
         alphabet="1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ",
     )
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(null=True, blank=True)
 
     date = models.DateTimeField(auto_now_add=True)
 
@@ -125,6 +125,9 @@ class Product(models.Model):
 
     def color(self):
         return Color.objects.filter(product=self)
+    
+    def orders(self):
+        return CartOrderItem.objects.filter(product=self).count()
 
     # over rides default save method
     def save(self, *args, **kwargs):
@@ -137,10 +140,12 @@ class Product(models.Model):
 
 
 class Gallery(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     image = models.FileField(
         upload_to="products",
         default="product.jpg",
+        blank=True,
+        null=True
     )
     active = models.BooleanField(default=True)
     date = models.DateTimeField(auto_now_add=True)
@@ -156,9 +161,9 @@ class Gallery(models.Model):
 
 
 class Specification(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    title = models.CharField(max_length=1000)
-    content = models.CharField(max_length=1000)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    title = models.CharField(max_length=1000, null=True, blank=True)
+    content = models.CharField(max_length=1000, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -172,9 +177,9 @@ class Specification(models.Model):
 
 # same products with diffrent size may be having diffrent price so this is to give appropriate size for appropriate product.
 class Size(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    name = models.CharField(max_length=1000)
-    price = models.DecimalField(decimal_places=2, max_digits=12, default=0.00)  # for price
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    name = models.CharField(max_length=1000, null=True, blank=True)
+    price = models.DecimalField(decimal_places=2, max_digits=12, default=0.00, null=True, blank=True)  # for price
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -187,8 +192,8 @@ class Size(models.Model):
 
 
 class Color(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    name = models.CharField(max_length=1000)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    name = models.CharField(max_length=1000, null=True, blank=True)
     color_code = models.CharField(max_length=100, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
 

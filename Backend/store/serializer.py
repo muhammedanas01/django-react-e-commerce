@@ -70,6 +70,7 @@ class ProductSerializers(serializers.ModelSerializer):
             #class methods in Product Model fot rating and rating count
             'product_rating',
             'rating_count',
+            'orders',
                    
         ]
     #sets up the object with any initial state or values
@@ -144,19 +145,19 @@ class ProductFaqSerializers(serializers.ModelSerializer):
             self.Meta.depth = 3
 
 class VendorSerializers(serializers.ModelSerializer):
-   
     class Meta:
         model = Vendor
         fields = "__all__"
+        depth = 3
+    
+    # def __init__(self, *args, **kwargs):
+    #     super(VendorSerializers, self).__init__()   
 
-    def __init__(self, *args, **kwargs):
-        super(VendorSerializers, self).__init__() 
-
-        request = self.context.get("request")
-        if request and request.method == "POST":
-            self.Meta.depth = 0
-        else:
-            self.Meta.depth = 3
+    #     request = self.context.get("request")
+    #     if request and request.method == "POST":
+    #         self.Meta.depth = 0
+    #     else:
+    #         self.Meta.depth = 3
 
 
 
@@ -198,7 +199,7 @@ class NotificationSerializers(serializers.ModelSerializer):
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        super(NotificationSerializers, self).__init__() 
+        super(NotificationSerializers, self).__init__(*args, **kwargs) 
 
         request = self.context.get("request")
         if request and request.method == "POST":
@@ -214,11 +215,34 @@ class CouponSerializers(serializers.ModelSerializer):
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        super(CouponSerializers, self).__init__() 
+        super(CouponSerializers, self).__init__(*args, **kwargs) 
 
         request = self.context.get("request")
         if request and request.method == "POST":
             self.Meta.depth = 0
         else:
             self.Meta.depth = 3
+
+class SummarySerializer(serializers.Serializer):
+    products = serializers.IntegerField()
+    orders = serializers.IntegerField()
+    revenue = serializers.IntegerField() 
+  
+
+class EarningSerializer(serializers.Serializer):
+    monthly_revenue = serializers.IntegerField() 
+    total_revenue = serializers.IntegerField() 
+
+
+class CouponSummarySerializer(serializers.Serializer):
+    total_coupons = serializers.IntegerField()
+    active_coupons = serializers.IntegerField()
+
+
+class NotificationSummarySerializer(serializers.Serializer):
+    read_notification = serializers.IntegerField()
+    unread_notification = serializers.IntegerField()
+    all_notification = serializers.IntegerField()
+
+  
   

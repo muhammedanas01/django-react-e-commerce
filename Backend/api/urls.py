@@ -2,7 +2,7 @@ from django.urls import path
 from userauths import views as userauths_views 
 from store import views as store_views
 from customer import views as customer_views
-
+from vendor import views as vendor_views
 from rest_framework_simplejwt.views import TokenRefreshView
 
 
@@ -70,16 +70,39 @@ urlpatterns = [
     #customer settings
     path('users/profile/<int:user_id>/',customer_views.ProfileView.as_view(), name="profile view"),
 
+    # vendor dashboard
+    path('vendor/stats/<vendor_id>', vendor_views.DashboardStatsApiView.as_view(), name="dashboard api view"),
+    path('vendor-orders-report/<vendor_id>', vendor_views.MonthlyOrderChartApiView, name="monthy order chart"),
+    path('vendor-product-report/<vendor_id>', vendor_views.MonthlyProductChartApiView, name="monthy product chart"),
 
+    path('vendor/order/<vendor_id>', vendor_views.OrderApiView.as_view(), name="order"),
+    path('vendor/order-detail/<order_id>/<vendor_id>', vendor_views.OrderDetailApiView.as_view(), name="order detail"),
+    path('vendor/revenue/<order_id>/<vendor_id>', vendor_views.RevenueApiView.as_view(), name="revenue"),
+    path('vendor/products/<vendor_id>', vendor_views.VendorProductApiView.as_view(), name="product"),
 
+    #path('vendor/filter-product/<vendor_id>', vendor_views.FilterProductApiView.as_view(), name=""),
+    path('vendor/earning/<vendor_id>', vendor_views.EarningApiView.as_view(), name=""),
+    path('vendor/monthly-earning/<vendor_id>', vendor_views.MonthlyEarningTracker, name=""),
+    path('vendor/review-list/<vendor_id>', vendor_views.ReviewListApiView.as_view(), name=""),
+   #path('vendor/review-detail/<review_id>/<vendor_id>', vendor_views.ReviewDetailApiView.as_view(), name=""),
+    path('vendor/coupon-create/<vendor_id>', vendor_views.CouponListApiView.as_view(), name=""),
+    path('vendor/coupon-detail/<coupon_id>/<vendor_id>', vendor_views.CouponDetailApiView.as_view(), name=""),
+    path('vendor/coupon-stats/<vendor_id>', vendor_views.CouponStatsApiView.as_view(), name=""),
 
-   
+    path('vendor/notification/<vendor_id>', vendor_views.NotificationApiView.as_view(), name=""),
+    path('vendor/notification-seen/<vendor_id>', vendor_views. NotificationSeenApiView.as_view(), name=""),
+    path('vendor/notification-summary/<vendor_id>', vendor_views.NotificationSummaryApiView.as_view(), name=""),
+    path('vendor/noti-mark-as-seen/<notification_id>/<vendor_id>', vendor_views.MarkVendorNotificationAsSeen.as_view(), name=""),
+
+    path('vendor/profile-update/<int:pk>', vendor_views. VendorProfileUpdateView.as_view(), name=""),
+    path('vendor/shop-update/<int:pk>', vendor_views. ShopUpdateView.as_view(), name=""),
+    path('vendor/shop/<vendor_slug>', vendor_views.ShopApiView.as_view(), name=""),
+    path('vendor/shop-product/<vendor_slug>', vendor_views.ShopProductApiView.as_view(), name=""),
+    path('vendor-create-product/', vendor_views.ProductCreateApiView.as_view(), name=""),
+    path('vendor-update-product/<vendor_id>/<product_id>/', vendor_views.ProductUpdateApiView.as_view(), name=""),
+    path('vendor-delete-product/<vendor_id>/<product_id>/', vendor_views.ProductDeleteApiView.as_view(), name=""),
 
     
-
-
-
-
 
 
 

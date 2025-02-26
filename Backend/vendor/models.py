@@ -6,7 +6,7 @@ from userauths.models import User, Profile
 
 class Vendor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE) # one user one vendor 
-    image = models.FileField(upload_to="vendor", blank=True, default="vendor.jpg"),# shop avatar or image
+    image = models.FileField(upload_to="vendor", blank=True, default="vendor.jpg")# shop avatar or image
     name = models.CharField(max_length=200, help_text="Shop Name", null=False, blank=False)
     description = models.TextField(null=True, blank=True)
     mobile = models.CharField(max_length=200, help_text="shop mobile number", null=False, blank=False)
@@ -23,8 +23,7 @@ class Vendor(models.Model):
     #over rides default save method
     def save(self, *args, **kwargs):
         if self.slug == "" or self.slug == None:
-            self.slug == slugify(self.name)
-
+            self.slug = slugify(self.name)
         super(Vendor, self).save( *args, **kwargs)# ensures that the model instance is saved
 
     
