@@ -143,7 +143,7 @@ function PaymentSuccess() {
                                   />
                                 </div>
                                 <div className="text-center">
-                                  <h1>Transaction Already Completed</h1>
+                                  <h1>Transaction Completed</h1>
                                   <p>
                                     "Your payment has already been confirmed!
                                     The details of your order have been sent to
