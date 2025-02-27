@@ -1,35 +1,105 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap');
-
-.register-header {
-  font-family: 'Lora', serif; /* Elegant, premium font */
-  font-size: 2rem; /* Larger font size for prominence */
-  font-weight: 700; /* Bold weight */
-  color: #2c3e50; /* Dark color for sophistication */
-  text-align: center; /* Center align the text */
-  margin-bottom: 1rem; /* Space below the header */
-  letter-spacing: 1.2px; /* Slightly increased letter spacing */
-  border-bottom: 2px solid #34e89e; /* Stylish underline for emphasis */
-  padding-bottom: 0.5rem; /* Padding to balance the underline */
+/* Black & White Button Style */
+.premium-btn-processing, .lux-btn-signup {
+  background-color: black;
+  color: white;
+  border: 2px solid white;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
 }
 
-/* Styles for Register form controls */
-.register-form-control {
-    width: 100%;
-    padding: 0.375rem 0.75rem; /* Default form control padding */
-    font-size: 1rem; /* Default font size */
-    line-height: 1.5; /* Default line height */
-    color: #495057; /* Default text color */
-    background-color: #fff; /* Default background color */
-    background-clip: padding-box; /* Default background clip */
-    border: 1px solid #ced4da; /* Default border color */
-    border-radius: 0.25rem; /* Default border radius */
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* Default transition */
-  
-    /* Custom styles */
-    
-    padding: 10px 15px; /* Custom padding */
-    border: 1px solid  #34e89e; /* Custom border color */
-    color: #2c3e50; /* Custom text color */
-    font-weight: 600;   
-  }
-  
+.premium-btn-processing:hover, .lux-btn-signup:hover {
+  background-color: white;
+  color: black;
+}
+
+/* Remove gradient if you want black-and-white */
+.lux-btn-signup {
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+}
+
+/* Fixing the transition issue */
+.btn-outline-success, .btn-primary, .btn-register, .btn-danger {
+  background: black !important;
+  border: 2px solid black !important;
+  color: white !important;
+  border-radius: 0;
+  padding: 10px 20px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Hover Effect */
+.btn-outline-success:hover, .btn-primary:hover, .btn-register:hover, .btn-danger:hover {
+  background-color: white !important;
+  color: black !important;
+}
+
+
+/* Black & White Form Input Styling */
+.register-form-control, .login-form-control {
+  font-family: 'Lora', serif;
+  width: 100%;
+  padding: 12px 18px;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: black; /* Black text */
+  background-color: white; /* White background */
+  border: 2px solid black; /* Black border */
+  border-radius: 5px;
+  transition: all 0.3s ease-in-out;
+  font-weight: 600;
+  outline: none; /* Removes default blue highlight */
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle inner shadow */
+}
+
+/* Input Focus Effect - Keeps White Background */
+.register-form-control:focus, .login-form-control:focus {
+  border-color: black; /* Black border when focused */
+  background-color: white; /* Stays white */
+  color: black; /* Black text remains */
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3); /* Subtle glow effect */
+}
+
+/* Placeholder Styling */
+.register-form-control::placeholder, .login-form-control::placeholder {
+  color: rgba(0, 0, 0, 0.5); /* Dim black for placeholders */
+  font-weight: 500;
+}
+
+/* Style for Form Labels */
+.register-label, .login-label {
+  font-family: 'Lora', serif;
+  font-size: 1rem;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 5px;
+  display: block;
+}
+
+/* Remove extra gap between input fields */
+.register-form-group, .login-form-group {
+  margin-bottom: 10px;
+}
+
+
+
+/* Center the Section Content */
+
+
+/* Style the Card */
+
+/* Center Register Header */
+.register-header {
+  font-family: 'Lora', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: black;
+  text-align: center;
+  margin-bottom: 1rem;
+  letter-spacing: 1.2px;
+  padding-bottom: 0.5rem;
+}

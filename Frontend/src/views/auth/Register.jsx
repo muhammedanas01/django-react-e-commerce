@@ -6,7 +6,7 @@ import { useAuthStore } from "../../store/auth";
 import { register } from "../../utils/auth";
 
 import "../Style/buttonstyle.css";
-import "../Style/register.css"
+import "../Style/register.css";
 
 function Register() {
   const [fullName, setFullName] = useState("");
@@ -18,26 +18,23 @@ function Register() {
 
   const navigate = useNavigate();
   const isLoggedIn = useAuthStore((state) => state.setLoggedIn());
-  
 
-  console.log(isLoggedIn)
-  
+  console.log(isLoggedIn);
+
   useEffect(() => {
     if (isLoggedIn) {
       navigate("/");
-      
     }
   }, [isLoggedIn]);
 
-    // useEffect(() => {
-    // if (isLoggedIn) { 
-    //   alert('You need to log out to access this page');
-    //   setTimeout(() => {
-    //     navigate('/');
-    //   }, 0.0000);
-    // }
-    // }, [isLoggedIn]);
-  
+  // useEffect(() => {
+  // if (isLoggedIn) {
+  //   alert('You need to log out to access this page');
+  //   setTimeout(() => {
+  //     navigate('/');
+  //   }, 0.0000);
+  // }
+  // }, [isLoggedIn]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,8 +48,7 @@ function Register() {
       password2
     );
     if (error) {
-      alert(JSON.stringify(error)); 
-      
+      alert(JSON.stringify(error));
     } else {
       navigate("/");
     }
@@ -60,13 +56,10 @@ function Register() {
     setIsLoading(false);
   };
 
-
-
-  
-//   if (isLoggedIn) { 
-//     alert('you need to logout to access this page')
-//     return navigate('/'); 
-//   }// Prevent rendering the registration form }
+  //   if (isLoggedIn) {
+  //     alert('you need to logout to access this page')
+  //     return navigate('/');
+  //   }// Prevent rendering the registration form }
 
   return (
     <div>
@@ -167,25 +160,30 @@ function Register() {
                                                     {password2 !== password ? 'Passwords do not match' : ''}
                                                 </p> */}
 
-                          
-
-                          {isLoading === true ? 
-                              <button
-                              type="submit" disabled
-                              className="btn btn-primary btn-rounding w-100 mb premium-btn-processing">
-                               Proccesing<i className="fas fa-spinner fa-spin"/></button>
-
-                              :<button
+                          {isLoading === true ? (
+                            <button
                               type="submit"
-                              className="btn btn-primary btn-rounding w-100 mb lux-btn-signup">
-                               SignUp <i className="fas fa-user-plus"/></button>
+                              disabled
+                              className="register-button btn btn-primary btn-rounding w-100 mb premium-btn-processing"
+                            >
+                              Processing{" "}
+                              <i className="fas fa-spinner fa-spin" />
+                            </button>
+                          ) : (
+                            <button
+                              type="submit"
+                              className="register-button btn btn-primary btn-rounding w-100 mb lux-btn-signup"
+                            >
+                              SignUp <i className="fas fa-user-plus" />
+                            </button>
+                          )}
 
-                          }
-                          
                           <div className="text-center">
-                            <p className="mt-4"  style={{ color: '#28A745'}} >
+                            <p className="mt-4" style={{ color: "#28A745" }}>
                               Already have an account?{" "}
-                              <Link to="/login/" style={{ color: "#007BFF" }}>Login</Link>
+                              <Link to="/login/" style={{ color: "#007BFF" }}>
+                                Login
+                              </Link>
                             </p>
                           </div>
                         </form>

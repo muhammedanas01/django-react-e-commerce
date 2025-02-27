@@ -59,7 +59,7 @@ function Login() {
               <div className="col-xl-5 col-md-8">
                 <div className="card rounded-5">
                   <div className="card-body p-4">
-                    <h3 className="text-center login-header">Skywalker.</h3>
+                    <h3 className="text-center login-header">NexBuy</h3>
                     <br />
 
                     <div className="tab-content">

@@ -252,8 +252,8 @@ function VendorSettings() {
                           width={150}
                         />
                         <div className="mt-3">
-                          <h4 className="text-dark">Destiny Franks</h4>
-                          <p className="text-secondary mb-1">Web Developer</p>
+                          <h4 className="text-dark">{vendorData.name}</h4>
+                          {/* <p className="text-secondary mb-1">Web Developer</p> */}
                         </div>
                       </div>
                     </div>

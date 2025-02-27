@@ -2,11 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
 /* Navbar styles */
+/* Navbar styles */
 .sticky-navbar {
   position: fixed;
   top: 0;
-  z-index: 1020; /* Ensure it stays above other elements */
-  background-color: #2b2d42;
+  z-index: 1020;
+  background-color: #f8f9fa; /* Light background color */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
 }
@@ -15,97 +16,82 @@
   display: flex;
   top: 0;
   z-index: 1020;
-  background-color: #2b2d42; /* Dark, luxurious background color */
-  font-family: 'Playfair Display', serif; /* Classic, elegant font */
+  background-color: #f8f9fa; /* Light gray */
+  font-family: 'Playfair Display', serif;
   padding: 15px 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand {
-  font-family: 'Poppins', sans-serif; /* Modern, clean font */
+  font-family: 'Poppins', sans-serif;
   font-size: 1.75rem;
-  color: #f8f9fa; /* White color for contrast */
-  text-transform: uppercase;
+  color: #007BFF; /* Bright blue for visibility */
+  text-transform: none;
   font-weight: 600;
 }
 
 .navbar-brand:hover {
-  color: #ffb703; /* Gold hover color for a luxurious feel */
+  color: #007BFF; /* Blue hover effect */
 }
 
 .nav-link,
 .navbar-nav .nav-item .nav-link {
-  color: #f8f9fa; /* White color for contrast */
+  color: #2b2d42; /* Darker text for better readability */
   font-family: 'Poppins', sans-serif;
   font-size: 1rem;
-  padding: 8px 16px; /* More padding for better spacing */
+  padding: 8px 16px;
 }
 
 .nav-link:hover,
 .navbar-nav .nav-item .nav-link:hover {
-  color: #a3b8f1; /*  */
-  background-color: rgba(255, 183, 3, 0.1); /* Subtle background for hover effect */
-  border-radius: 5px; /* Rounded corners for hover effect */
+  color: #007BFF;
+  background-color: rgba(0, 123, 255, 0.1);
+  border-radius: 5px;
 }
 
 .dropdown-menu {
-  background-color: #4d4f60; /* Darker dropdown background for contrast */
+  background-color: #e9ecef; /* Light dropdown background */
   border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow for dropdown */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .dropdown-item {
-  color: #f8f9fa; /* White color for contrast */
+  color: #2b2d42;
   font-family: 'Poppins', sans-serif;
   font-size: 1rem;
 }
 
 .dropdown-item:hover {
-  color: #789ae9; /* Gold hover color for a luxurious feel */
-  background-color: rgba(255, 183, 3, 0.1); /* Subtle background for hover effect */
+  color: #007BFF;
+  background-color: rgba(0, 123, 255, 0.1);
 }
 
-.btn-outline-success {
-  border-radius: 10px;
-  color: #d6cde7; /* Green color for a fresh look */
-  border-color: #007BFF;
-}
-
-.btn-outline-success:hover {
-  background-color: #364be7;
-  color: #fff;
-}
-
-.btn-primary {
-  border-radius: 10px;
-  background: linear-gradient(45deg, #3a86ff);
-  border: none;
-  color: #fff;
-}
-
-.btn-primary:hover {
-  background: linear-gradient(45deg, #8338ec, #3a86ff);
-}
-
-.btn-register {
-  border-radius: 10px;
-  background: #09dd53; /* New gradient color */
-  border: none;
-  color: black;
-}
-
-.btn-register:hover {
-  background: #09dd53;  /* New gradient color */
-}
-
+/* Black Buttons with Hover Effect */
+.btn-outline-success,
+.btn-primary,
+.btn-register,
 .btn-danger {
-  border-radius: 10px;
-  background: linear-gradient(45deg, #ef233c, #d90429);
-  border: none;
-  color: #fff;
+  background: black;
+  border: 2px solid black;
+  color: white;
+  border-radius: 0; /* Square button */
+  padding: 10px 20px;
+  transition: all 0.3s ease-in-out;
 }
 
+.btn-outline-success:hover,
+.btn-primary:hover,
+.btn-register:hover,
 .btn-danger:hover {
-  background: linear-gradient(45deg, #d90429, #ef233c);
+  background: white;
+  color: black;
+  border: 2px solid black;
+}
+
+.d-flex .form-control {
+  flex-grow: 1; /* Allows the input to expand */
+  width: 100%; /* Makes sure it takes available space */
+  min-width: 300px; /* Adjust as needed */
+  max-width: 500px; /* Optional: Set a max width */
 }
 

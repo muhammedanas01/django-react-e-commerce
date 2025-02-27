@@ -7,9 +7,12 @@ import useCurrentAddress from "../plugin/UserCountry";
 import UserData from "../plugin/UserData";
 import CartID from "../plugin/CartId";
 
+import Banner from "./Banner";
+
 import { CartContext } from "../plugin/Context";
 
 import "../Style/product-card-btn.css";
+
 
 const Toast = Swal.mixin({
   toast:true,
@@ -125,12 +128,17 @@ function Products() {
 
   return (
     <>
+      <Banner 
+        //title="Shop the Best Products!" 
+        //subtitle="Find amazing deals on your favorite items." 
+        backgroundImage="/iphone.png"
+      />
       <main className="mt-5">
-        <div className="container">
+      <div className="container-fluid px-5">
           <section className="text-center">
             <div className="row">
               {products?.map((p, index) => (
-                <div className="col-lg-4 col-md-12 mb-4" key={index}>
+                <div className="col-lg-3 col-md- mb-4" key={index}>
                   <div className="card">
                     <div
                       className="bg-image hover-zoom ripple"

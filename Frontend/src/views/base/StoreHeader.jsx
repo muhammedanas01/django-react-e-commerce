@@ -30,10 +30,10 @@ function StoreHeader() {
 
   return (
     <div>
-      <nav className="navbar navbar-expand-lg navbar-dark sticky-navbar">
+      <nav className="navbar navbar-expand-lg navbar-light sticky-navbar">
         <div className="container">
           <Link className="navbar-brand" to="/">
-            Skywalker.
+            NexBuy
           </Link>
           <button
             className="navbar-toggler"
@@ -150,7 +150,7 @@ function StoreHeader() {
                 </ul>
               </li>
             </ul>
-            <div className="d-flex">
+            <div className="d-flex search-container">
               <input
                 onChange={handleSearchChange}
                 name="search"

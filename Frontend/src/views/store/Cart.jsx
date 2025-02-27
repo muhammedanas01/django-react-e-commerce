@@ -1,4 +1,4 @@
-import { useState, useEffect,useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -12,6 +12,8 @@ import apiInstance from "../../utils/axios";
 
 import Swal from "sweetalert2";
 
+import "../Style/Cart.css";
+
 const Toast = Swal.mixin({
   toast: true,
   position: "top",
@@ -20,7 +22,7 @@ const Toast = Swal.mixin({
 });
 
 function Cart() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [cart, setCart] = useState([]);
   const [cartTotal, setCartTotal] = useState([]);
@@ -36,12 +38,11 @@ function Cart() {
   const [postalCode, setPostalCode] = useState("");
   const [country, setCountry] = useState("");
 
-  const [cartCount, setCartCount] = useContext(CartContext)
+  const [cartCount, setCartCount] = useContext(CartContext);
 
   const userData = UserData();
   const cartId = CartID();
   const currentAddress = useCurrentAddress();
-  
 
   // this is for to list cart items
   const fetchCartData = (cartId, userId) => {
@@ -64,7 +65,8 @@ function Cart() {
   };
 
   if (cartId !== null || cartId !== undefined) {
-    if (userData !== undefined) { //with user id
+    if (userData !== undefined) {
+      //with user id
       useEffect(() => {
         fetchCartData(cartId, userData?.user_id);
         fetchCartTotal(cartId, userData?.user_id); //cart summary
@@ -133,14 +135,14 @@ function Cart() {
         : `cart-item-delete/${cartId}/${item_id}/`;
 
       await apiInstance.delete(url);
-       //fetch updated cart details
-       const urll = userData
-       ? `cart-list/${cartId}/${userData?.user_id}/`
-       : `cart-list/${cartId}/`;
-       apiInstance.get(urll).then((res) => {
-         setCartCount(res.data.length)
-       })
-       
+      //fetch updated cart details
+      const urll = userData
+        ? `cart-list/${cartId}/${userData?.user_id}/`
+        : `cart-list/${cartId}/`;
+      apiInstance.get(urll).then((res) => {
+        setCartCount(res.data.length);
+      });
+
       Toast.fire({
         icon: "success",
         title: "item removed from cart",
@@ -220,12 +222,11 @@ function Cart() {
         formData.append("state", state);
         formData.append("postalcode", postalCode);
         formData.append("country", country);
-        console.log(country)
+        console.log(country);
 
         const response = await apiInstance.post("create-order/", formData);
-        console.log(response.data)
-        navigate(`/checkout/${response.data.order_id}/`)
-       
+        console.log(response.data);
+        navigate(`/checkout/${response.data.order_id}/`);
       } catch (error) {
         console.error("Order creation failed:", error);
       }
@@ -329,6 +330,18 @@ function Cart() {
                                       onChange={(e) =>
                                         handleQuantityChange(e, c.product.id)
                                       }
+                                      style={{
+                                        width: "40px",
+                                        minWidth: "40px", // Prevents auto-expanding
+                                        maxWidth: "40px", // Prevents override by Bootstrap
+                                        textAlign: "center",
+                                        border: "2px solid black",
+                                        borderRadius: "5px",
+                                        padding: "5px",
+                                        appearance: "none",
+                                        MozAppearance: "textfield",
+                                        WebkitAppearance: "none",
+                                      }}
                                     />
                                   </div>
                                   <button
@@ -527,7 +540,7 @@ function Cart() {
                         </div>
                         <div className="d-flex justify-content-between">
                           <span>Vat</span>
-                          <span>AED {cartTotal.tax?.toFixed(2)}</span>                       
+                          <span>AED {cartTotal.tax?.toFixed(2)}</span>
                         </div>
                         <div className="d-flex justify-content-between">
                           <span>Service Fee</span>
@@ -548,14 +561,32 @@ function Cart() {
                           <label htmlFor="couponCode" className="form-label">
                             Apply Coupon Code
                           </label>
-                          <div className="d-flex">
+                          <div className="d-flex" style={{ gap: "5px" }}>
                             <input
                               type="text"
                               id="couponCode"
-                              className="form-control me-2"
+                              className="form-control"
                               placeholder="Enter coupon code"
+                              style={{
+                                width: "100%",
+                                minWidth: "150px",
+                                maxWidth: "250px",
+                                border: "2px solid ",
+                                borderRadius: "5px",
+                                padding: "5px",
+                              }}
                             />
-                            <button className="btn btn-success">Apply</button>
+                            <button
+                              className="btn btn-success"
+                              style={{
+                                whiteSpace: "nowrap",
+                                height: "40px",
+                                border: "2px solid black",
+                                borderRadius: "5px",
+                              }}
+                            >
+                              Apply
+                            </button>
                           </div>
                         </div>
                       </section>

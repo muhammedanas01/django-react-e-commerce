@@ -40,7 +40,7 @@ function ProductDetails() {
     rating: 0
   });
 
-
+  console.log(product)
   const currentAddress = useCurrentAddress();
   const userData = UserData();
   const cartId = CartID();
@@ -491,7 +491,7 @@ function ProductDetails() {
               <div className="row g-0">
                 <div className="col-md-4">
                   <img
-                    src="https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250"
+                    src={product.vendor?.image}
                     style={{
                       height: "100%",
                       width: "100%",
@@ -503,8 +503,7 @@ function ProductDetails() {
                 </div>
                 <div className="col-md-8">
                   <div className="card-body">
-                    <h5 className="card-title">John Doe</h5>
-                    <p className="card-text">Frontend Developer</p>
+                    <h5 className="card-title">{product.vendor?.name}</h5>
                   </div>
                 </div>
               </div>
@@ -561,13 +560,13 @@ function ProductDetails() {
                   <div className="card mb-3">
                     {reviews?.map((review, index) => (
                       <div className="row g-0" key={index}>
-                        <div className="col-md-3">
+                        {/* <div className="col-md-3">
                           <img
-                            src="https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250"
+                            src={review.user?.image}
                             alt="User Image"
                             className="img-fluid"
                           />
-                        </div>
+                        </div> */}
                         <div className="col-md-9">
                           <div className="card-body">
                             <h5 className="card-title">
